@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestionar Personal - Sistema Hospitalario</title>
+    <link rel="stylesheet" href="../../estilo.css">
+</head>
+<body class="admin-page">
+    <div class="top-bar">
+        <h1> Sistema Hospitalario</h1>
+        <div class="user-info">
+            <span>Bienvenido, <strong>Administrador</strong></span>
+            <button class="logout-btn" onclick="logout()">Cerrar Sesión</button>
+        </div>
+    </div>
+
+    <aside class="sidebar">
+        <div class="sidebar-logo"> Hospital</div>
+        <ul class="sidebar-menu">
+            <li><a href="dashboard.html"> Dashboard</a></li>
+            <li><a href="gestionar-personas.html"> Personas</a></li>
+            <li><a href="gestionar-pacientes.html"> Pacientes</a></li>
+            <li><a href="gestionar-personal.html" class="active"> Personal</a></li>
+            <li><a href="gestionar-roles.html"> Roles</a></li>
+            <li><a href="gestionar-patologias.html"> Patologías</a></li>
+            <li><a href="gestionar-menus.html"> Menús</a></li>
+            <li><a href="gestionar-productos.html"> Productos</a></li>
+            <li><a href="gestionar-proveedores.html"> Proveedores</a></li>
+            <li><a href="gestionar-movimientos.html"> Movimientos</a></li>
+            <li><a href="gestionar-inventario.html"> Inventario</a></li>
+        </ul>
+    </aside>
+
+    <div class="main-content">
+        <div class="page-header">
+            <h1>Gestionar Personal</h1>
+            <button class="btn btn-primary" onclick="if(typeof limpiarFormularioPersonal === 'function') limpiarFormularioPersonal(); openModal('modalPersonal')">+ Nuevo Personal</button>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h2>Lista de Personal</h2>
+            </div>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>DNI</th>
+                            <th>Rol</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tablaPersonal"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalPersonal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="tituloModalPersonal">Nuevo Personal</h2>
+                <button class="modal-close" onclick="closeModal('modalPersonal'); if(typeof limpiarFormularioPersonal === 'function') limpiarFormularioPersonal();">&times;</button>
+            </div>
+            <form id="formPersonal" onsubmit="guardarPersonal(event)">
+                <input type="hidden" id="id_personal" name="id_personal">
+
+                <div class="form-group">
+                    <label for="persona_personal">Persona</label>
+                    <input type="text" id="persona_personal" name="persona_personal" list="listaPersonasPersonal" autocomplete="off" placeholder="Escribí nombre, apellido o DNI" required>
+                    <input type="hidden" id="persona_personal_id" name="persona_personal_id">
+                    <datalist id="listaPersonasPersonal"></datalist>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="role_personal">Rol</label>
+                        <select id="role_personal" name="role_personal" required>
+                            <option value="">Seleccionar rol</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="estado_activo">Estado</label>
+                        <select id="estado_activo" name="estado_activo" required>
+                            <option value="true">Activo</option>
+                            <option value="false">Inactivo</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-success">Guardar</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('modalPersonal'); if(typeof limpiarFormularioPersonal === 'function') limpiarFormularioPersonal();">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="../utils/utils.js"></script>
+    <script src="personal.js"></script>
+</body>
+</html>

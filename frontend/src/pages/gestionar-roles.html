@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Administración - Sistema Hospitalario</title>
+    <link rel="stylesheet" href="../../estilo.css">
+</head>
+<body class="admin-page">
+    <div class="top-bar">
+        <h1> Sistema Hospitalario</h1>
+        <div class="user-info">
+            <span>Bienvenido, <strong>Administrador</strong></span>
+            <button class="logout-btn" onclick="logout()">Cerrar Sesión</button>
+        </div>
+    </div>
+
+    <aside class="sidebar">
+        <div class="sidebar-logo"> Hospital</div>
+        <ul class="sidebar-menu">
+            <li><a href="#" onclick="showSection('roles')" id="menu-roles" class="active"> Roles</a></li>
+            <li><a href="#" onclick="showSection('personas')"> Personas</a></li>
+            <li><a href="#" onclick="showSection('pacientes')"> Pacientes</a></li>
+            <li><a href="#" onclick="showSection('personal')"> Personal</a></li>
+            <li><a href="#" onclick="showSection('patologias')"> Patologías</a></li>
+            <li><a href="#" onclick="showSection('menus')"> Menús</a></li>
+            <li><a href="#" onclick="showSection('productos')"> Productos</a></li>
+            <li><a href="#" onclick="showSection('proveedores')"> Proveedores</a></li>
+            <li><a href="#" onclick="showSection('movimientos')"> Movimientos</a></li>
+            <li><a href="#" onclick="showSection('inventario')"> Inventario</a></li>
+        </ul>
+    </aside>
+
+    <div class="main-content">
+        <div class="page-header">
+            <h1 id="section-title">Gestionar Roles</h1>
+        </div>
+
+        <div id="roles" class="section-content">
+            <div style="display: flex; justify-content: flex-end; margin-bottom: 15px;">
+                <button class="btn btn-primary" onclick="openModal('modalRol')">+ Nuevo Rol</button>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <h2>Lista de Roles</h2>
+                </div>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre</th>
+                                <th>Descripción</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tablaRoles"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="personas" class="section-content" style="display: none;">
+            <div style="display: flex; justify-content: flex-end; margin-bottom: 15px; gap: 8px;">
+                <button class="btn btn-primary" onclick="abrirCrudAdmin('personas')">+ Nueva Persona</button>
+                <button class="btn btn-secondary" onclick="recargarSeccionAdminData('personas')">Recargar</button>
+            </div>
+            <div class="card">
+                <div class="card-header"><h2>Gestión de Personas</h2></div>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>DNI</th>
+                                <th>Apellido</th>
+                                <th>Nombre</th>
+                                <th>Teléfono</th>
+                                <th>Email</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tablaPersonasAdmin"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="pacientes" class="section-content" style="display: none;">
+            <div style="display: flex; justify-content: flex-end; margin-bottom: 15px; gap: 8px;">
+                <button class="btn btn-primary" onclick="abrirCrudAdmin('pacientes')">+ Nuevo Paciente</button>
+                <button class="btn btn-secondary" onclick="recargarSeccionAdminData('pacientes')">Recargar</button>
+            </div>
+            <div class="card">
+                <div class="card-header"><h2>Gestión de Pacientes</h2></div>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Documento</th>
+                                <th>Nombre</th>
+                                <th>Fecha Nacimiento</th>
+                                <th>Teléfono</th>
+                                <th>Email</th>
+                                <th>Obra Social</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tablaPacientesAdmin"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="personal" class="section-content" style="display: none;">
+            <div style="display: flex; justify-content: flex-end; margin-bottom: 15px; gap: 8px;">
+                <button class="btn btn-primary" onclick="abrirCrudAdmin('personal')">+ Nuevo Personal</button>
+                <button class="btn btn-secondary" onclick="recargarSeccionAdminData('personal')">Recargar</button>
+            </div>
+            <div class="card">
+                <div class="card-header"><h2>Gestión de Personal</h2></div>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>DNI</th>
+                                <th>Apellido</th>
+                                <th>Nombre</th>
+                                <th>Rol</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tablaPersonalAdmin"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="patologias" class="section-content" style="display: none;">
+            <div style="display: flex; justify-content: flex-end; margin-bottom: 15px; gap: 8px;">
+                <button class="btn btn-primary" onclick="abrirCrudAdmin('patologias')">+ Nueva Patología</button>
+                <button class="btn btn-secondary" onclick="recargarSeccionAdminData('patologias')">Recargar</button>
+            </div>
+            <div class="card">
+                <div class="card-header"><h2>Gestión de Patologías</h2></div>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre</th>
+                                <th>Descripción</th>
+                                <th>Es Discapacidad</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tablaPatologiasAdmin"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="menus" class="section-content" style="display: none;">
+            <div style="display: flex; justify-content: flex-end; margin-bottom: 15px; gap: 8px;">
+                <button class="btn btn-primary" onclick="abrirCrudAdmin('menus')">+ Nuevo Menú</button>
+                <button class="btn btn-secondary" onclick="recargarSeccionAdminData('menus')">Recargar</button>
+            </div>
+            <div class="card">
+                <div class="card-header"><h2>Gestión de Menús</h2></div>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre</th>
+                                <th>Descripción</th>
+                                <th>Patología</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tablaMenusAdmin"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="productos" class="section-content" style="display: none;">
+            <div style="display: flex; justify-content: flex-end; margin-bottom: 15px; gap: 8px;">
+                <button class="btn btn-primary" onclick="abrirCrudAdmin('productos')">+ Nuevo Producto</button>
+                <button class="btn btn-secondary" onclick="recargarSeccionAdminData('productos')">Recargar</button>
+            </div>
+            <div class="card">
+                <div class="card-header"><h2>Gestión de Productos</h2></div>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre</th>
+                                <th>Categoría</th>
+                                <th>Unidad</th>
+                                <th>Stock Mínimo</th>
+                                <th>Stock Actual</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tablaProductosAdmin"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="proveedores" class="section-content" style="display: none;">
+            <div style="display: flex; justify-content: flex-end; margin-bottom: 15px; gap: 8px;">
+                <button class="btn btn-primary" onclick="abrirCrudAdmin('proveedores')">+ Nuevo Proveedor</button>
+                <button class="btn btn-secondary" onclick="recargarSeccionAdminData('proveedores')">Recargar</button>
+            </div>
+            <div class="card">
+                <div class="card-header"><h2>Gestión de Proveedores</h2></div>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre</th>
+                                <th>Empresa</th>
+                                <th>Contacto</th>
+                                <th>Teléfono</th>
+                                <th>Email</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tablaProveedoresAdmin"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="movimientos" class="section-content" style="display: none;">
+            <div style="display: flex; justify-content: flex-end; margin-bottom: 15px; gap: 8px;">
+                <button class="btn btn-primary" onclick="abrirCrudAdmin('movimientos')">+ Nuevo Movimiento</button>
+                <button class="btn btn-secondary" onclick="recargarSeccionAdminData('movimientos')">Recargar</button>
+            </div>
+            <div class="card">
+                <div class="card-header"><h2>Gestión de Movimientos</h2></div>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Paciente</th>
+                                <th>Tipo</th>
+                                <th>Cama</th>
+                                <th>Piso</th>
+                                <th>Personal</th>
+                                <th>Fecha</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tablaMovimientosAdmin"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="inventario" class="section-content" style="display: none;">
+            <div style="display: flex; justify-content: flex-end; margin-bottom: 15px; gap: 8px;">
+                <button class="btn btn-primary" onclick="abrirCrudAdmin('inventario')">+ Nuevo Registro</button>
+                <button class="btn btn-secondary" onclick="recargarSeccionAdminData('inventario')">Recargar</button>
+            </div>
+            <div id="alertasInventarioAdmin" class="card" style="margin-bottom: 12px; display: none;"></div>
+            <div class="card">
+                <div class="card-header"><h2>Gestión de Inventario</h2></div>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Producto</th>
+                                <th>Stock</th>
+                                <th>Personal</th>
+                                <th>Fecha</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tablaInventarioAdmin"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalCrudAdmin" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="crudAdminTitulo">Nuevo registro</h2>
+                <button class="modal-close" onclick="cerrarCrudAdmin()">&times;</button>
+            </div>
+            <form id="formCrudAdmin">
+                <div id="crudAdminCampos"></div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-success">Guardar</button>
+                    <button type="button" class="btn btn-secondary" onclick="cerrarCrudAdmin()">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="modalRol" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="tituloModalRol">Nuevo Rol</h2>
+                <button class="modal-close" onclick="closeModal('modalRol')">&times;</button>
+            </div>
+            <form id="formRol" onsubmit="guardarRol(event)">
+                <div class="form-group">
+                    <label for="nombre_rol">Nombre del Rol</label>
+                    <input type="text" id="nombre_rol" name="nombre_rol" required>
+                </div>
+                <div class="form-group">
+                    <label for="descripcion_rol">Descripción</label>
+                    <textarea id="descripcion_rol" name="descripcion_rol" rows="4"></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-success">Guardar</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('modalRol')">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="../utils/utils.js"></script>
+    <script src="roles.js"></script>
+    <script src="../services/admin-datos.js"></script>
+
+    <script>
+        function showSection(sectionId) {
+            // Ocultar todas las secciones
+            document.querySelectorAll('.section-content').forEach(el => el.style.display = 'none');
+            // Quitar el estado activo de los botones del menú
+            document.querySelectorAll('.sidebar-menu a').forEach(el => el.classList.remove('active'));
+
+            const titleMap = {
+                'roles': 'Gestionar Roles',
+                'personas': 'Gestionar Personas',
+                'pacientes': 'Gestionar Pacientes',
+                'personal': 'Gestionar Personal',
+                'patologias': 'Gestionar Patologías',
+                'menus': 'Gestionar Menús',
+                'productos': 'Gestionar Productos',
+                'proveedores': 'Gestionar Proveedores',
+                'movimientos': 'Gestionar Movimientos',
+                'inventario': 'Gestionar Inventario'
+            };
+
+            if(titleMap[sectionId]) {
+                document.getElementById('section-title').textContent = titleMap[sectionId];
+            }
+
+            // Mostrar el bloque seleccionado
+            document.getElementById(sectionId).style.display = 'block';
+
+            if (typeof window.recargarSeccionAdminData === 'function') {
+                window.recargarSeccionAdminData(sectionId);
+            }
+            
+            // Marcar azul el botón clickeado
+            const currentLink = document.querySelector(`.sidebar-menu a[onclick="showSection('${sectionId}')"]`);
+            if(currentLink) currentLink.classList.add('active');
+        }
+    </script>
+</body>
+</html>

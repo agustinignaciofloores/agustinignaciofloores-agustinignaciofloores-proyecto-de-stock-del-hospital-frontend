@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestionar Movimientos - Sistema Hospitalario</title>
+    <link rel="stylesheet" href="../../estilo.css">
+</head>
+<body class="admin-page">
+    <div class="top-bar">
+        <h1> Sistema Hospitalario</h1>
+        <div class="user-info">
+            <span>Bienvenido, <strong>Administrador</strong></span>
+            <button class="logout-btn" onclick="logout()">Cerrar Sesión</button>
+        </div>
+    </div>
+
+    <aside class="sidebar">
+        <div class="sidebar-logo"> Hospital</div>
+        <ul class="sidebar-menu">
+            <li><a href="dashboard.html"> Dashboard</a></li>
+            <li><a href="gestionar-personas.html"> Personas</a></li>
+            <li><a href="gestionar-pacientes.html"> Pacientes</a></li>
+            <li><a href="gestionar-personal.html"> Personal</a></li>
+            <li><a href="gestionar-roles.html"> Roles</a></li>
+            <li><a href="gestionar-patologias.html"> Patologías</a></li>
+            <li><a href="gestionar-menus.html"> Menús</a></li>
+            <li><a href="gestionar-productos.html"> Productos</a></li>
+            <li><a href="gestionar-proveedores.html"> Proveedores</a></li>
+            <li><a href="gestionar-movimientos.html" class="active"> Movimientos</a></li>
+            <li><a href="gestionar-inventario.html"> Inventario</a></li>
+        </ul>
+    </aside>
+
+    <div class="main-content">
+        <div class="page-header">
+            <h1>Gestionar Movimientos de Pacientes</h1>
+            <button class="btn btn-primary" onclick="if(typeof limpiarFormularioMovimiento === 'function') limpiarFormularioMovimiento(); openModal('modalMovimiento')">+ Nuevo Movimiento</button>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h2>Historial de Movimientos</h2>
+            </div>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Paciente</th>
+                            <th>Tipo de Movimiento</th>
+                            <th>Cama</th>
+                            <th>Piso</th>
+                            <th>Fecha</th>
+                            <th>Personal Médico</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tablaMovimientos"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalMovimiento" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="tituloModalMovimiento">Nuevo Movimiento</h2>
+                <button class="modal-close" onclick="closeModal('modalMovimiento'); if(typeof limpiarFormularioMovimiento === 'function') limpiarFormularioMovimiento();">&times;</button>
+            </div>
+            <form id="formMovimiento" onsubmit="guardarMovimiento(event)">
+                <input type="hidden" id="id_movimiento" name="id_movimiento">
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="paciente_movimiento">Paciente</label>
+                        <input type="text" id="paciente_movimiento" name="paciente_movimiento" list="listaPacientesMovimiento" placeholder="Nombre del paciente" required>
+                        <datalist id="listaPacientesMovimiento"></datalist>
+                    </div>
+                    <div class="form-group">
+                        <label for="tipo_movimiento">Tipo de Movimiento</label>
+                        <select id="tipo_movimiento" name="tipo_movimiento" required>
+                            <option value="">Seleccionar tipo</option>
+                            <option value="Ingreso">Ingreso</option>
+                            <option value="Traslado">Traslado</option>
+                            <option value="Alta">Alta</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="nro_cama">Número de Cama</label>
+                        <input type="text" id="nro_cama" name="nro_cama" placeholder="Ej: A-12">
+                    </div>
+                    <div class="form-group">
+                        <label for="piso_movimiento">Piso</label>
+                        <input type="text" id="piso_movimiento" name="piso_movimiento" placeholder="Ej: 2">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="personal_medico_movimiento">Personal Médico</label>
+                    <input type="text" id="personal_medico_movimiento" name="personal_medico_movimiento" list="listaPersonalMovimiento" placeholder="Nombre del médico (opcional)">
+                    <datalist id="listaPersonalMovimiento"></datalist>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-success">Guardar</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('modalMovimiento'); if(typeof limpiarFormularioMovimiento === 'function') limpiarFormularioMovimiento();">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="../utils/utils.js"></script>
+    <script src="movimientos.js"></script>
+</body>
+</html>

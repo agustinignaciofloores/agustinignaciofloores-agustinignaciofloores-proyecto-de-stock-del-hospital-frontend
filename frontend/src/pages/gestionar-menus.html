@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestionar Menús - Sistema Hospitalario</title>
+    <link rel="stylesheet" href="../../estilo.css">
+</head>
+<body class="admin-page">
+    <div class="top-bar">
+        <h1> Sistema Hospitalario</h1>
+        <div class="user-info">
+            <span>Bienvenido, <strong>Administrador</strong></span>
+            <button class="logout-btn" onclick="logout()">Cerrar Sesión</button>
+        </div>
+    </div>
+
+    <aside class="sidebar">
+        <div class="sidebar-logo"> Hospital</div>
+        <ul class="sidebar-menu">
+            <li><a href="dashboard.html"> Dashboard</a></li>
+            <li><a href="gestionar-personas.html"> Personas</a></li>
+            <li><a href="gestionar-pacientes.html"> Pacientes</a></li>
+            <li><a href="gestionar-personal.html"> Personal</a></li>
+            <li><a href="gestionar-roles.html"> Roles</a></li>
+            <li><a href="gestionar-patologias.html"> Patologías</a></li>
+            <li><a href="gestionar-menus.html" class="active"> Menús</a></li>
+            <li><a href="gestionar-productos.html"> Productos</a></li>
+            <li><a href="gestionar-proveedores.html"> Proveedores</a></li>
+            <li><a href="gestionar-movimientos.html"> Movimientos</a></li>
+            <li><a href="gestionar-inventario.html"> Inventario</a></li>
+        </ul>
+    </aside>
+
+    <div class="main-content">
+        <div class="page-header">
+            <h1>Gestionar Menús</h1>
+            <button class="btn btn-primary" onclick="if(typeof limpiarFormularioMenu === 'function') limpiarFormularioMenu(); openModal('modalMenu')">+ Nuevo Menú</button>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h2>Lista de Menús</h2>
+            </div>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Descripción</th>
+                            <th>Restricción</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tablaMenus"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalMenu" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="tituloModalMenu">Nuevo Menú</h2>
+                <button class="modal-close" onclick="closeModal('modalMenu'); if(typeof limpiarFormularioMenu === 'function') limpiarFormularioMenu();">&times;</button>
+            </div>
+            <form id="formMenu" onsubmit="guardarMenu(event)">
+                <input type="hidden" id="id_menu" name="id_menu">
+
+                <div class="form-group">
+                    <label for="nombre_menu">Nombre del Menú</label>
+                    <input type="text" id="nombre_menu" name="nombre_menu" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="descripcion_menu">Descripción</label>
+                    <textarea id="descripcion_menu" name="descripcion_menu" rows="4"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="restriccion_menu">Restricción / Dieta especial</label>
+                    <input type="text" id="restriccion_menu" name="restriccion_menu" list="listaRestriccionesMenu" placeholder="Ej: Diabético, Sin gluten, Ninguna">
+                    <datalist id="listaRestriccionesMenu"></datalist>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-success">Guardar</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('modalMenu'); if(typeof limpiarFormularioMenu === 'function') limpiarFormularioMenu();">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="../utils/utils.js"></script>
+    <script src="menus.js"></script>
+</body>
+</html>

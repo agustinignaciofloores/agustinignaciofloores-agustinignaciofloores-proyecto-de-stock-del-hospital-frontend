@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Visitas - Sistema Hospitalario</title>
+    <link rel="stylesheet" href="../../estilo.css">
+</head>
+<body class="visits-page">
+    <!-- Barra Superior -->
+    <div class="top-bar">
+        <h1> Sistema Hospitalario</h1>
+        <div class="user-info">
+            <span>Bienvenido al Sistema de Visitas</span>
+            <button class="logout-btn" onclick="logout()">Salir</button>
+        </div>
+    </div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-logo"> Visitas</div>
+        <ul class="sidebar-menu">
+            <li><a href="#" onclick="showSection('dashboard')" id="menu-dashboard" class="active"> Inicio</a></li>
+            <li><a href="#" onclick="showSection('info-horarios')"> Horarios de Visita</a></li>
+            <li><a href="#" onclick="showSection('buscar-paciente')"> Buscar Paciente</a></li>
+            <li><a href="#" onclick="showSection('registro-visita')"> Registrar Visita</a></li>
+            <li><a href="#" onclick="showSection('mis-visitas')"> Mis Visitas</a></li>
+            <li><a href="#" onclick="showSection('restricciones')"> Restricciones</a></li>
+        </ul>
+    </aside>
+
+    <!-- Contenido Principal -->
+    <div class="main-content">
+        <div class="page-header">
+            <h1 id="section-title">Gestión de Visitas Hospitalarias</h1>
+        </div>
+
+        <!-- Sección Principal (Dashboard) -->
+        <div id="dashboard-section">
+            <div class="dashboard-grid">
+                <div class="stat-card">
+                    <h3>Visitas Hoy</h3>
+                    <div class="number">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Visitantes en Hospital</h3>
+                    <div class="number">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Visitas Confirmadas</h3>
+                    <div class="number">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Pacientes Disponibles</h3>
+                    <div class="number">0</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2>Información General</h2>
+                </div>
+                <div class="card-body">
+                    <p><strong>Horarios de Visita:</strong></p>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li>Lunes a Viernes: 14:00 - 18:00 hs</li>
+                        <li>Sábados y Domingos: 10:00 - 12:00 y 15:00 - 19:00 hs</li>
+                    </ul>
+                    <p style="margin-top: 15px;"><strong>Importante:</strong> Las visitas requieren autorización previa del paciente o responsable.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección Horarios -->
+        <div id="info-horarios" class="section-content" style="display: none;">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Horarios de Visita</h2>
+                </div>
+                <div class="card-body">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Día</th>
+                                <th>Horario</th>
+                                <th>Máximo de Visitantes</th>
+                                <th>Observaciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Lunes a Viernes</td>
+                                <td>14:00 - 18:00</td>
+                                <td>2 por paciente</td>
+                                <td>Horario laboral de consultas</td>
+                            </tr>
+                            <tr>
+                                <td>Sábados</td>
+                                <td>10:00 - 12:00 y 15:00 - 19:00</td>
+                                <td>3 por paciente</td>
+                                <td>Jornada completa</td>
+                            </tr>
+                            <tr>
+                                <td>Domingos</td>
+                                <td>10:00 - 12:00 y 15:00 - 19:00</td>
+                                <td>3 por paciente</td>
+                                <td>Jornada completa</td>
+                            </tr>
+                            <tr>
+                                <td>Feriados</td>
+                                <td>10:00 - 14:00</td>
+                                <td>2 por paciente</td>
+                                <td>Requiere autorización especial</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección Buscar Paciente -->
+        <div id="buscar-paciente" class="section-content" style="display: none;">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Buscar Paciente</h2>
+                </div>
+                <div class="card-body">
+                    <div class="search-box">
+                        <input type="text" placeholder="Nombre o documento del paciente..." id="buscar-pac-input">
+                        <button class="btn btn-primary" onclick="buscarPaciente()">Buscar</button>
+                    </div>
+                    <div id="resultado-busqueda" style="margin-top: 20px;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección Registrar Visita -->
+        <div id="registro-visita" class="section-content" style="display: none;">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Registrar Nueva Visita</h2>
+                </div>
+                <form id="formVisita" style="padding: 20px;">
+                    <input type="hidden" id="paciente-id-visita">
+                    <div class="form-group">
+                        <label for="nombre-visitante">Nombre del Visitante</label>
+                        <input type="text" id="nombre-visitante" placeholder="Nombre completo" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="documento-visitante">Documento de Identidad</label>
+                        <input type="text" id="documento-visitante" placeholder="DNI/Pasaporte" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="paciente-visita">Paciente a Visitar</label>
+                        <input type="text" id="paciente-visita" placeholder="Buscá y seleccioná en Buscar Paciente" readonly required>
+                    </div>
+                    <div class="form-group">
+                        <label for="relacion">Relación con el Paciente</label>
+                        <select id="relacion" required>
+                            <option value="">Seleccionar...</option>
+                            <option value="familia">Familia</option>
+                            <option value="amigo">Amigo</option>
+                            <option value="pareja">Pareja</option>
+                            <option value="abogado">Abogado</option>
+                            <option value="otro">Otro</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="hora-visita">Hora de Entrada</label>
+                        <input type="time" id="hora-visita" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="observaciones">Observaciones</label>
+                        <textarea id="observaciones" rows="3" placeholder="Notas adicionales..."></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-success">Registrar Visita</button>
+                        <button type="reset" class="btn btn-secondary">Limpiar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Sección Mis Visitas -->
+        <div id="mis-visitas" class="section-content" style="display: none;">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Mis Visitas Registradas</h2>
+                </div>
+                <div class="card-body">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Paciente</th>
+                                <th>Habitación</th>
+                                <th>Hora Entrada</th>
+                                <th>Hora Salida</th>
+                                <th>Estado</th>
+                                <th>Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabla-mis-visitas">
+                            <tr>
+                                <td colspan="7" style="text-align: center; padding: 20px;">No tienes visitas registradas</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección Restricciones -->
+        <div id="restricciones" class="section-content" style="display: none;">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Restricciones de Visitas</h2>
+                </div>
+                <div class="card-body">
+                    <div style="background-color: #fef3c7; border-left: 4px solid #f59e0b; padding: 15px; margin-bottom: 15px; border-radius: 4px;">
+                        <p><strong>⚠️ Restricciones Importantes:</strong></p>
+                        <ul style="margin-left: 20px; margin-top: 10px;">
+                            <li>Pacientes en estado crítico: sin visitas</li>
+                            <li>Pacientes en aislamiento: se requiere autorización médica y protección especial</li>
+                            <li>Menores de edad: acompañados obligatoriamente</li>
+                            <li>Máximo 2-3 visitantes por paciente según horario</li>
+                            <li>Prohibido el ingreso con alimentos sin autorización</li>
+                            <li>Mascotas: no permitidas</li>
+                            <li>Visitantes con síntomas de enfermedad: no pueden ingresar</li>
+                        </ul>
+                    </div>
+
+                    <div style="background-color: #dbeafe; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 4px;">
+                        <p><strong>ℹ️ Recomendaciones:</strong></p>
+                        <ul style="margin-left: 20px; margin-top: 10px;">
+                            <li>Lavarse las manos antes de ingresar</li>
+                            <li>Mantener la higiene durante la visita</li>
+                            <li>Respetar el descanso del paciente</li>
+                            <li>No usar dispositivos ruidosos</li>
+                            <li>Respetar la privacidad de otros pacientes</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../utils/utils.js"></script>
+    <script src="visitas.js"></script>
+    <script>
+        function showSection(sectionId) {
+            // Ocultar todas las secciones
+            document.querySelectorAll('.section-content').forEach(el => el.style.display = 'none');
+            document.getElementById('dashboard-section').style.display = 'none';
+            
+            // Quitar clase activa de todos los enlaces del menú
+            document.querySelectorAll('.sidebar-menu a').forEach(el => el.classList.remove('active'));
+
+            // Mapeo dinámico de títulos
+            const titleMap = {
+                'dashboard': 'Gestión de Visitas Hospitalarias',
+                'info-horarios': 'Horarios de Visita',
+                'buscar-paciente': 'Buscar Paciente',
+                'registro-visita': 'Registrar Nueva Visita',
+                'mis-visitas': 'Mis Visitas Registradas',
+                'restricciones': 'Restricciones de Visitas'
+            };
+
+            if(titleMap[sectionId]) {
+                document.getElementById('section-title').textContent = titleMap[sectionId];
+            }
+
+            // Mostrar sección seleccionada y activar botón correspondiente
+            if (sectionId === 'dashboard') {
+                document.getElementById('dashboard-section').style.display = 'block';
+                document.getElementById('menu-dashboard').classList.add('active');
+            } else {
+                document.getElementById(sectionId).style.display = 'block';
+                const currentLink = document.querySelector(`.sidebar-menu a[onclick="showSection('${sectionId}')"]`);
+                if(currentLink) currentLink.classList.add('active');
+            }
+        }
+    </script>
+</body>
+</html>

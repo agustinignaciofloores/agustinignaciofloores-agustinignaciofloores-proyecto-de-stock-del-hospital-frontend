@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Almacenero - Sistema Hospitalario</title>
+    <link rel="stylesheet" href="../../estilo.css">
+</head>
+<body class="warehouse-page">
+    <div class="top-bar">
+        <h1>
+            Sistema Hospitalario</h1>
+        <div class="user-info">
+            <span>Bienvenido, <strong id="warehouseName">Almacenero</strong></span>
+            <button class="logout-btn" onclick="logout()">Cerrar Sesión</button>
+        </div>
+    </div>
+
+    <aside class="sidebar">
+        <div class="sidebar-logo"> Almacén</div>
+        <ul class="sidebar-menu">
+            <li><a href="#" onclick="showSection('dashboard-section', this)" class="active"> Mi Dashboard</a></li>
+            <li><a href="#" onclick="showSection('inventario', this)"> Inventario</a></li>
+            <li><a href="#" onclick="showSection('movimientos', this)"> Movimientos</a></li>
+            <li><a href="#" onclick="showSection('ingresos', this)"> Ingresos</a></li>
+            <li><a href="#" onclick="showSection('salidas', this)"> Salidas</a></li>
+            <li><a href="#" onclick="showSection('proveedores', this)"> Proveedores</a></li>
+            <li><a href="#" onclick="showSection('reportes', this)"> Reportes</a></li>
+        </ul>
+    </aside>
+
+    <div class="main-content">
+        <div class="page-header"><h1>Dashboard Almacén</h1></div>
+
+        <div id="dashboard-section" class="section-content">
+            <div class="dashboard-grid">
+                <div class="stat-card"><h3>Total Productos</h3><div class="number">0</div></div>
+                <div class="stat-card"><h3>Bajo Mínimo</h3><div class="number" style="color: #f56565;">0</div></div>
+                <div class="stat-card"><h3>Movimientos</h3><div class="number">0</div></div>
+                <div class="stat-card"><h3>Gasto Hoy</h3><div class="number">$ 0.00</div></div>
+            </div>
+        </div>
+
+        <div id="inventario" class="section-content" style="display: none;"><div class="card"><div class="card-header"><h2>Inventario</h2><button class="btn btn-success" onclick="agregarProducto()">+ Producto</button><button class="btn btn-secondary" style="margin-left:8px;" onclick="openModal('modalInventario')">+ Movimiento</button></div><div class="card-body"><div id="contenedorAlertas" style="margin-bottom:12px;"></div><table class="table"><thead><tr><th>ID</th><th>Producto</th><th>Categoría</th><th>Unidad</th><th>Lote</th><th>Stock</th><th>Costo U.</th><th>Gasto total</th><th>Proveedor</th><th>Vencimiento</th><th>Personal</th><th>Acciones</th></tr></thead><tbody id="tablaInventario"></tbody></table></div></div></div>
+        <div id="movimientos" class="section-content" style="display: none;"><div class="card"><div class="card-header"><h2>Movimientos</h2></div><div class="card-body"><table class="table"><thead><tr><th>ID</th><th>Producto</th><th>Tipo</th><th>Cantidad</th><th>Proveedor</th><th>Precio U.</th><th>Gasto total</th><th>Vencimiento</th><th>Fecha</th><th>Personal</th><th>Motivo</th></tr></thead><tbody id="tablaMovimientos"></tbody></table></div></div></div>
+        <div id="ingresos" class="section-content" style="display: none;"><div class="card"><div class="card-header"><h2>Ingresos</h2></div><div class="card-body"><table class="table"><thead><tr><th>ID</th><th>Producto</th><th>Proveedor</th><th>Cantidad</th><th>Precio Unitario</th><th>Total Gastado</th><th>Vencimiento</th><th>Acciones</th></tr></thead><tbody id="tablaIngresos"></tbody></table></div></div></div>
+        <div id="salidas" class="section-content" style="display: none;"><div class="card"><div class="card-header"><h2>Salidas</h2></div><div class="card-body"><table class="table"><thead><tr><th>ID</th><th>Producto</th><th>Cantidad</th><th>Fecha</th><th>Usuario</th><th>Motivo</th></tr></thead><tbody id="tablaSalidas"></tbody></table></div></div></div>
+        <div id="proveedores" class="section-content" style="display: none;"><div class="card"><div class="card-header"><h2>Proveedores</h2></div><div class="card-body"><table class="table"><thead><tr><th>ID</th><th>Empresa</th><th>Contacto</th><th>Teléfono</th><th>Email</th><th>Acciones</th></tr></thead><tbody id="tablaProveedores"></tbody></table></div></div></div>
+        <div id="reportes" class="section-content" style="display: none;"><div class="card"><div class="card-header"><h2>Reportes</h2></div><div class="card-body"><div id="gridReportes"></div></div></div></div>
+    </div>
+
+    <div id="modalInventario" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="tituloModalInventario">Nuevo Movimiento de Inventario</h2>
+                <button class="modal-close" onclick="closeModal('modalInventario'); if(typeof limpiarFormularioInventario === 'function') limpiarFormularioInventario();">&times;</button>
+            </div>
+            <form id="formInventario" onsubmit="if(typeof guardarInventario==='function'){guardarInventario(event);}">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="producto_inventario">Producto</label>
+                        <input type="text" id="producto_inventario" name="producto_inventario" list="listaProductosInventario" required>
+                        <datalist id="listaProductosInventario"></datalist>
+                    </div>
+                    <div class="form-group">
+                        <label for="stock_inventario">Cantidad</label>
+                        <input type="number" id="stock_inventario" name="stock_inventario" min="1" step="1" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="precio_inventario">Costo unitario ($)</label>
+                        <input type="number" id="precio_inventario" name="precio_inventario" min="0" step="0.01" placeholder="Requerido para ingresos">
+                    </div>
+                    <div class="form-group">
+                        <label for="unidad_inventario">Unidad</label>
+                        <select id="unidad_inventario" name="unidad_inventario" required>
+                            <option value="kilogramos">Kilogramos</option>
+                            <option value="litros">Litros</option>
+                            <option value="docenas">Docenas</option>
+                            <option value="unidad">Unidad</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="tipo_movimiento">Tipo</label>
+                        <select id="tipo_movimiento" name="tipo_movimiento" required>
+                            <option value="INGRESO">Ingreso</option>
+                            <option value="SALIDA">Salida</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="personal_inventario">Personal que realiza el movimiento</label>
+                        <select id="personal_inventario" name="personal_inventario" required><option value="">Seleccionar personal</option></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="categoria_inventario">Categoría de Lote</label>
+                        <select id="categoria_inventario" name="categoria_inventario" required>
+                            <option value="verduras">Verduras</option>
+                            <option value="frutas">Frutas</option>
+                            <option value="carnes">Carnes</option>
+                            <option value="pollo">Pollo</option>
+                            <option value="aguas">Aguas</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="lote_inventario">Lote</label>
+                        <input type="text" id="lote_inventario" name="lote_inventario" placeholder="Ej: L-2026-07-01">
+                    </div>
+                    <div class="form-group">
+                        <label for="proveedor_inventario">Proveedor / compra</label>
+                        <select id="proveedor_inventario" name="proveedor_inventario"><option value="">Seleccionar proveedor</option></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="vencimiento_inventario">Vencimiento</label>
+                        <input type="date" id="vencimiento_inventario" name="vencimiento_inventario">
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('modalInventario'); if(typeof limpiarFormularioInventario==='function') limpiarFormularioInventario();">Cancelar</button>
+                    <button type="submit" class="btn btn-success">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="../utils/utils.js"></script>
+    <script src="inventario.js"></script>
+    <script src="proveedores.js"></script>
+    <script src="almacenero.js"></script>
+    <script>
+        // Función para refrescar la sección de almacén según el ID de la sección
+        async function refreshWarehouseSection(sectionId) {
+            try {
+                if (sectionId === 'inventario' && typeof cargarInventario === 'function') {
+                    await cargarInventario();
+                    return;
+                }
+
+                if ((sectionId === 'movimientos' || sectionId === 'ingresos' || sectionId === 'salidas') && typeof cargarMovimientosYSalidas === 'function') {
+                    await cargarMovimientosYSalidas();
+                    return;
+                }
+
+                if (sectionId === 'proveedores' && typeof cargarProveedores === 'function') {
+                    await cargarProveedores();
+                    return;
+                }
+
+                if ((sectionId === 'reportes' || sectionId === 'dashboard-section') && typeof cargarReportesAlmacen === 'function') {
+                    await cargarReportesAlmacen();
+                }
+            } catch (error) {
+                console.error('Error al refrescar sección de almacén:', error);
+            }
+        }
+        // Función para mostrar la sección correspondiente y refrescar los datos
+        async function showSection(sectionId, element) {
+            // Ocultar todas las secciones
+            document.querySelectorAll('.section-content').forEach(el => el.style.display = 'none');
+            
+            // Mostrar la seleccionada
+            const target = document.getElementById(sectionId);
+            if (target) target.style.display = 'block';
+
+            // Activar visualmente el enlace del menú
+            document.querySelectorAll('.sidebar-menu a').forEach(a => a.classList.remove('active'));
+            if (element) element.classList.add('active');
+
+            await refreshWarehouseSection(sectionId);
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const usuario = localStorage.getItem('currentUser') || 'Almacenero';
+            document.getElementById('warehouseName').textContent = usuario;
+        });
+        // Función para agregar un nuevo producto al inventario
+        async function agregarProducto() {
+            const nombre = prompt('Nombre del producto:');
+            if (!nombre) return;
+
+            const categoria = (prompt('Categoría (verduras, frutas, carnes, pollo, aguas):', 'verduras') || 'verduras').trim().toLowerCase();
+            const unidad = (prompt('Unidad (kilogramos, litros, docenas, unidad):', 'kilogramos') || 'unidad').trim().toLowerCase();
+            const lote = (prompt('Lote (opcional, por ejemplo L-2026-07-01):', '') || '').trim();
+            const precio = prompt('Costo unitario de compra por unidad ($):', '0');
+            const precioNum = parseFloat(precio);
+            if (isNaN(precioNum) || precioNum < 0) {
+                showAlert('danger', 'Precio unitario invalido.');
+                return;
+            }
+
+            const stock = prompt('Stock inicial (numero):', '0');
+            const stockNum = parseInt(stock, 10);
+            if (isNaN(stockNum) || stockNum < 0) {
+                showAlert('danger', 'Stock inicial invalido.');
+                return;
+            }
+
+            try {
+                const response = await fetch(window.buildApiUrl('/api/inventario'), {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        producto: nombre.trim(),
+                        stock: stockNum,
+                        precio_unitario: precioNum,
+                        categoria,
+                        unidad,
+                        lote
+                    })
+                });
+
+                const result = await response.json();
+                if (!response.ok || !result.success) {
+                    throw new Error(result.error || result.message || 'No se pudo crear el producto');
+                }
+
+                showAlert('success', `Producto creado correctamente. Gasto inicial: $ ${Number(result.gasto_total || 0).toFixed(2)}`);
+                if (typeof cargarSelects === 'function') cargarSelects();
+                if (typeof cargarInventario === 'function') cargarInventario();
+            } catch (error) {
+                showAlert('danger', error.message || 'Error al crear producto');
+            }
+        }
+    </script>
+</body>
+</html>

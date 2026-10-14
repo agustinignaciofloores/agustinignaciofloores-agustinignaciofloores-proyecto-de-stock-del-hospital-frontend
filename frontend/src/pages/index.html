@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acceso al Sistema Hospitalario</title>
+    <link rel="stylesheet" href="../../estilo.css">
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-info">
+            <h1>Bienvenido</h1>
+            <p>Sistema de gestión hospitalaria. Accede a tu cuenta para continuar.</p>
+        </div>
+
+        <div class="login-form">
+            <h2>Inicia Sesión</h2>
+            <p class="login-subtitle">Ingresa tus credenciales</p>
+            
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="usuario">Usuario</label>
+                    <input type="text" id="usuario" name="usuario" placeholder="Tu usuario" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="contraseña">Contraseña</label>
+                    <input type="password" id="contraseña" name="contraseña" placeholder="Tu contraseña" required>
+                </div>
+
+                <button type="submit">Ingresar</button>
+            </form>
+            <p class="register-link">¿No tienes cuenta? <a href="#" id="btnOpenRegister">Regístrate aquí</a></p>    
+        </div>
+    </div>
+
+    <div id="modalRegister" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="tituloModalRegister">Registro de Usuario</h2>
+                <button class="modal-close" id="btnCloseRegisterX">&times;</button>
+            </div>
+            <form id="registerForm">
+                <div class="form-group">
+                    <label for="usuario_reg">Usuario</label>
+                    <input type="text" id="usuario_reg" name="usuario_reg" required>
+                </div>
+                <div class="form-group">
+                    <label for="contraseña_reg">Contraseña</label>
+                    <input type="password" id="contraseña_reg" name="contraseña_reg" required>
+                </div>
+                <div class="form-group">
+                    <label for="contraseña_reg_confirm">Confirmar contraseña</label>
+                    <input type="password" id="contraseña_reg_confirm" name="contraseña_reg_confirm" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="DNI">D.N.I</label>
+                    <input type="number" id="DNI" name="DNI" required>
+                </div>
+                <div class="form-group">
+                    <label for="apellido">Apellido</label>
+                    <input type="text" id="apellido" name="apellido" maxlength="40" required>
+                </div>
+                <div class="form-group">
+                    <label for="nombre">Nombre</label>
+                    <input type="text" id="nombre" name="nombre" maxlength="40" required>
+                </div>
+                <div class="form-group">
+                    <label for="telefono">Teléfono</label>
+                    <input type="tel" id="telefono" name="telefono">
+                </div>
+                <div class="form-group">
+                    <label for="sexo">Sexo</label>
+                    <select id="sexo" name="sexo" required>
+                        <option value="">Seleccione...</option>
+                        <option value="Masculino">Masculino</option>
+                        <option value="Femenino">Femenino</option>
+                        <option value="Otro">Otro</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="fecha_nac">Fecha de Nacimiento</label>
+                    <input type="date" id="fecha_nac" name="fecha_nac" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">E-mail</label>
+                    <input type="email" id="email" name="email">
+                </div>
+                <div class="form-group">
+                    <label for="edad">Edad</label>
+                    <input type="number" id="edad" name="edad" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="estado_civil">Estado Civil</label>
+                    <select id="estado_civil" name="estado_civil">
+                        <option value="">Seleccione...</option>
+                        <option value="Soltero/a">Soltero/a</option>
+                        <option value="Casado/a">Casado/a</option>
+                        <option value="Divorciado/a">Divorciado/a</option>
+                        <option value="Viudo/a">Viudo/a</option>
+                        <option value="Unión de hecho">Unión de hecho</option>
+                        <option value="No quiero decir">No quiero decir</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="etnia">Etnia</label>
+                    <input type="text" id="etnia" name="etnia">
+                </div>
+                <div class="form-group">
+                    <label for="discapacidad">Discapacidad</label>
+                    <input type="text" id="discapacidad" name="discapacidad">
+                </div>
+
+                <div class="form-group">
+                    <label for="provincia">Provincia</label>
+                    <input type="text" id="provincia" name="provincia">
+                </div>
+                <div class="form-group">
+                    <label for="localidad">Localidad</label>
+                    <input type="text" id="localidad" name="localidad">
+                </div>
+                <div class="form-group">
+                    <label for="barrio">Barrio</label>
+                    <input type="text" id="barrio" name="barrio">
+                </div>
+                <div class="form-group">
+                    <label for="calle">Calle/Pasaje</label>
+                    <input type="text" id="calle" name="calle">
+                </div>
+                <div class="form-group">
+                    <label for="manzana">Manzana</label>
+                    <input type="text" id="manzana" name="manzana">
+                </div>
+                <div class="form-group">
+                    <label for="n_casa">N° Casa</label>
+                    <input type="text" id="n_casa" name="n_casa">
+                </div>
+                <div class="form-group">
+                    <label for="cp">Código Postal</label>
+                    <input type="text" id="cp" name="cp">
+                </div>
+
+                <div class="form-group">
+                    <label for="pais">Nacionalidad</label>
+                    <input type="text" id="pais" name="pais">
+                </div>
+
+                <div class="form-group">
+                    <label for="rol">Rol</label>
+                    <select id="rol" name="rol" required>
+                        <option value="">Seleccione...</option>
+                        <option value="paciente">Paciente</option>
+                        <option value="doctor">Doctor</option>
+                        <option value="enfermero">Enfermero</option>
+                        <option value="cocinero">Cocinero</option>
+                        <option value="almacenero">Almacenero</option>
+                        <option value="ordenanza">Ordenanza</option>
+                        <option value="usuario">Usuario</option>
+                        <option value="visita">Visita</option>
+                        <option value="donacion">Donación</option>
+                    </select>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-success">Registrar</button>
+                    <button type="button" class="btn btn-secondary" id="btnCancelRegister">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="../utils/utils.js"></script>
+</body>
+</html>

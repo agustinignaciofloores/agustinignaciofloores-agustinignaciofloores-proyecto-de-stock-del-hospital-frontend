@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Cocinero - Sistema Hospitalario</title>
+    <link rel="stylesheet" href="../../estilo.css">
+</head>
+<body class="cook-page">
+    <div class="top-bar">
+        <h1>🏥 Sistema Hospitalario</h1>
+        <div class="user-info">
+            <span>Bienvenido, <strong id="cookerName">Cocinero</strong></span>
+            <button class="logout-btn" onclick="logout()">Cerrar Sesión</button>
+        </div>
+    </div>
+
+    <aside class="sidebar">
+        <div class="sidebar-logo"> Cocina</div>
+        <ul class="sidebar-menu">
+            <li><a href="#" onclick="showSection('dashboard-section', this)" class="active"> Mi Dashboard</a></li>
+            <li><a href="#" onclick="showSection('menus', this)"> Menús Diarios</a></li>
+            <li><a href="#" onclick="showSection('pacientes', this)"> Dietas Especiales</a></li>
+            <li><a href="#" onclick="showSection('inventario', this)"> Inventario Cocina</a></li>
+            <li><a href="#" onclick="showSection('preparacion', this)"> En Preparación</a></li>
+            <li><a href="#" onclick="showSection('entregas', this)"> Entregas del Día</a></li>
+        </ul>
+    </aside>
+
+    <div class="main-content">
+        <div class="page-header">
+            <h1>Dashboard Cocina</h1>
+        </div>
+
+        <div id="dashboard-section" class="section-content">
+            <div class="dashboard-grid">
+                <div class="stat-card"><h3>Menús Hoy</h3><div class="number">0</div></div>
+                <div class="stat-card"><h3>Dietas Especiales</h3><div class="number">0</div></div>
+                <div class="stat-card"><h3>En Preparación</h3><div class="number">0</div></div>
+                <div class="stat-card"><h3>Entregas</h3><div class="number">0</div></div>
+            </div>
+            <div class="card">
+                <div class="card-header"><h2>Información de Cocina</h2></div>
+                <div class="card-body">
+                    <p><strong>Horario:</strong> 7:00 - 20:00 hs | <strong>Turnos:</strong> Desayuno, Almuerzo, Merienda, Cena</p>
+                    <p><strong>Personal Disponible:</strong> <span id="personal-disponible">-</span></p>
+                </div>
+            </div>
+        </div>
+
+        <div id="menus" class="section-content" style="display: none;"><div class="card"><div class="card-header"><h2>Menús Diarios</h2><button class="btn btn-success" onclick="nuevoMenu()">+ Nuevo Menú</button></div><div class="card-body"><table class="table"><thead><tr><th>Fecha</th><th>Turno</th><th>Plato</th><th>Raciones</th><th>Estado</th></tr></thead><tbody id="tablaMenus"></tbody></table></div></div></div>
+        
+        <div id="pacientes" class="section-content" style="display: none;"><div class="card"><div class="card-header"><h2>Dietas Especiales</h2></div><div class="card-body"><div class="search-box"><input id="buscar-dieta" type="text" placeholder="Buscar por paciente, habitación o dieta..."></div><table class="table"><thead><tr><th>Paciente</th><th>Habitación</th><th>Tipo de Dieta</th><th>Restricciones</th><th>Médico</th><th>Estado</th><th>Acción</th></tr></thead><tbody id="tablaDietas"></tbody></table></div></div></div>
+
+        <div id="inventario" class="section-content" style="display: none;"><div class="card"><div class="card-header"><h2>Inventario de Cocina</h2></div><div class="card-body"><table class="table"><thead><tr><th>Producto</th><th>Stock</th><th>Último Movimiento</th><th>Responsable</th></tr></thead><tbody id="tablaInventario"></tbody></table></div></div></div>
+
+        <div id="preparacion" class="section-content" style="display: none;"><div class="card"><div class="card-header"><h2>En Preparación</h2></div><div class="card-body"><div id="gridPreparacion"></div></div></div></div>
+
+        <div id="entregas" class="section-content" style="display: none;"><div class="card"><div class="card-header"><h2>Entregas</h2></div><div class="card-body"><table class="table"><thead><tr><th>Paciente</th><th>Dieta</th><th>Habitación</th><th>Estado</th><th>Última Actualización</th></tr></thead><tbody id="tablaEntregas"></tbody></table></div></div></div>
+    </div>
+
+    <script src="../utils/utils.js"></script>
+    <script src="cocinero.js"></script>
+    <script>
+        function showSection(sectionId, element) {
+            // Ocultar todas las secciones
+            document.querySelectorAll('.section-content').forEach(el => el.style.display = 'none');
+            
+            // Mostrar la seleccionada
+            const target = document.getElementById(sectionId);
+            if (target) target.style.display = 'block';
+
+            // Activar botón del menú
+            document.querySelectorAll('.sidebar-menu a').forEach(a => a.classList.remove('active'));
+            if (element) element.classList.add('active');
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            let usuario = 'Cocinero';
+            try {
+                const sesion = JSON.parse(localStorage.getItem('usuarioLogueado'));
+                usuario = sesion?.nombre || sesion?.usuario || usuario;
+            } catch (_) {}
+            document.getElementById('cookerName').textContent = usuario;
+        });
+    </script>
+</body>
+</html>

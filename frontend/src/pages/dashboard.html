@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Admin - Sistema Hospitalario</title>
+    <link rel="stylesheet" href="../../estilo.css">
+</head>
+<body class="admin-page">
+    <div class="top-bar">
+        <h1> Sistema Hospitalario</h1>
+        <div class="user-info">
+            <span>Bienvenido, <strong>Administrador</strong></span>
+            <button class="logout-btn" onclick="logout()">Cerrar Sesión</button>
+        </div>
+    </div>
+
+    <aside class="sidebar">
+        <div class="sidebar-logo"> Hospital</div>
+        <ul class="sidebar-menu">
+            <li><a href="#" onclick="showSection('dashboard', this)" class="active"> Dashboard</a></li>
+            <li><a href="#" onclick="showSection('personas', this)"> Personas</a></li>
+            <li><a href="#" onclick="showSection('pacientes', this)"> Pacientes</a></li>
+            <li><a href="#" onclick="showSection('personal', this)"> Personal</a></li>
+            </ul>
+    </aside>
+
+    <div class="main-content">
+        <div id="dashboard" class="section-content">
+            <div class="page-header"><h1>Panel de Control Administrativo</h1></div>
+            <div class="dashboard-grid">
+                <div class="stat-card"><h3>Total Pacientes</h3><div class="number" id="total-pacientes">0</div></div>
+                <div class="stat-card"><h3>Personal Activo</h3><div class="number" id="total-personal">0</div></div>
+                <div class="stat-card"><h3>Stock Total</h3><div class="number" id="total-stock">0</div></div>
+                <div class="stat-card"><h3>Camas Ocupadas</h3><div class="number" id="camas-ocupadas">0</div></div>
+            </div>
+            <div class="card">
+                <div class="card-header"><h2>Información del Sistema</h2></div>
+                <div class="card-body">
+                    <p><strong>Versión:</strong> 1.0.0 | <strong>Estado:</strong> <span style="color: green;">✓ En línea</span></p>
+                </div>
+            </div>
+        </div>
+        
+        <div id="personas" class="section-content" style="display:none;"><div class="card"><h2>Gestión de Personas</h2></div></div>
+    </div>
+
+    <script src="../utils/utils.js"></script>
+    <script src="dashboard.js"></script>
+    <script>
+        function showSection(sectionId, element) {
+            document.querySelectorAll('.section-content').forEach(el => el.style.display = 'none');
+            document.getElementById(sectionId).style.display = 'block';
+            document.querySelectorAll('.sidebar-menu a').forEach(a => a.classList.remove('active'));
+            if (element) element.classList.add('active');
+        }
+    </script>
+</body>
+</html>

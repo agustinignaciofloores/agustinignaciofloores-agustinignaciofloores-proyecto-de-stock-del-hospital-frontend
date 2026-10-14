@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestionar Ingresos de Almacén - Sistema Hospitalario</title>
+    <link rel="stylesheet" href="../../estilo.css">
+</head>
+<body class="admin-page">
+    <div class="top-bar">
+        <h1> Sistema Hospitalario</h1>
+        <div class="user-info">
+            <span>Bienvenido, <strong>Administrador</strong></span>
+            <button class="logout-btn" onclick="logout()">Cerrar Sesión</button>
+        </div>
+    </div>
+
+    <aside class="sidebar">
+        <div class="sidebar-logo"> Hospital</div>
+        <ul class="sidebar-menu">
+            <li><a href="dashboard.html"> Dashboard</a></li>
+            <li><a href="gestionar-ingresos-almacen.html" class="active"> Ingresos</a></li>
+            <li><a href="gestionar-productos.html"> Productos</a></li>
+            <li><a href="gestionar-proveedores.html"> Proveedores</a></li>
+            <li><a href="gestionar-personal.html"> Personal</a></li>
+        </ul>
+    </aside>
+
+    <div class="main-content">
+        <div class="page-header">
+            <h1>Gestionar Ingresos de Almacén</h1>
+            <button class="btn btn-primary" onclick="if(typeof limpiarFormularioIngreso === 'function') limpiarFormularioIngreso(); openModal('modalIngreso')">+ Nuevo Ingreso</button>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h2>Historial de Ingresos</h2>
+            </div>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Producto</th>
+                            <th>Proveedor</th>
+                            <th>Cantidad</th>
+                            <th>Precio Unitario</th>
+                            <th>Total</th>
+                            <th>Moneda</th>
+                            <th>Vencimiento</th>
+                            <th>Comprobante</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tablaIngresos"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalIngreso" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="tituloModalIngreso">Nuevo Ingreso</h2>
+                <button class="modal-close" onclick="closeModal('modalIngreso'); if(typeof limpiarFormularioIngreso === 'function') limpiarFormularioIngreso();">&times;</button>
+            </div>
+            <form id="formIngreso" onsubmit="guardarIngreso(event)">
+                <input type="hidden" id="id_ingreso" name="id_ingreso">
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="producto_ingreso">Producto</label>
+                        <select id="producto_ingreso" name="producto_ingreso" required>
+                            <option value="">Seleccionar producto</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="proveedor_ingreso">Proveedor</label>
+                        <select id="proveedor_ingreso" name="proveedor_ingreso" required>
+                            <option value="">Seleccionar proveedor</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="comprobante_ingreso">Ticket o comprobante</label>
+                        <input type="file" id="comprobante_ingreso" name="comprobante_ingreso" accept="image/*,.pdf">
+                        <small class="field-help">Imagen o PDF, máximo 5 MB.</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="total_ingreso">Total de la compra</label>
+                        <input type="text" id="total_ingreso" readonly value="$ 0,00">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="cantidad_ingreso">Cantidad</label>
+                        <input type="number" id="cantidad_ingreso" name="cantidad_ingreso" min="1" step="1" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="precio_unitario_ingreso">Precio Unitario</label>
+                        <input type="number" id="precio_unitario_ingreso" name="precio_unitario_ingreso" step="0.01" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="moneda_ingreso">Moneda</label>
+                        <input type="text" id="moneda_ingreso" name="moneda_ingreso" value="ARS" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="fecha_vencimiento_ingreso">Fecha de Vencimiento</label>
+                        <input type="date" id="fecha_vencimiento_ingreso" name="fecha_vencimiento_ingreso">
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-success">Guardar</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('modalIngreso'); if(typeof limpiarFormularioIngreso === 'function') limpiarFormularioIngreso();">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="../utils/utils.js"></script>
+    <script src="ingresos.js"></script>
+</body>
+</html>

@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Paciente - Sistema Hospitalario</title>
+    <link rel="stylesheet" href="../../estilo.css">
+</head>
+<body class="patient-page">
+    <div class="top-bar">
+        <h1> Sistema Hospitalario</h1>
+        <div class="user-info">
+            <span>Bienvenido, <strong id="pacienteName">Paciente</strong></span>
+            <button class="logout-btn" onclick="logout()">Cerrar Sesión</button>
+        </div>
+    </div>
+
+    <aside class="sidebar">
+        <div class="sidebar-logo"> Hospital</div>
+        <ul class="sidebar-menu">
+            <li><a href="#" onclick="showSection('dashboard')" id="menu-dashboard" class="active"> Mi Dashboard</a></li>
+            <li><a href="#" onclick="showSection('agendar-turno')"> Agendar Turno</a></li>
+            <li><a href="#" onclick="showSection('mi-info')"> Mi Información</a></li>
+            <li><a href="#" onclick="showSection('citas')"> Mis Citas</a></li>
+            <li><a href="#" onclick="showSection('registrar-visita')"> Registrar Visita</a></li>
+            <li><a href="#" onclick="showSection('historial')"> Historial Médico</a></li>
+            <li><a href="#" onclick="showSection('mensajes')"> Mensajes</a></li>
+            <li><a href="#" onclick="showSection('recetas')"> Mis Recetas</a></li>
+        </ul>
+    </aside>
+
+    <div class="main-content">
+        <div class="page-header">
+            <h1 id="section-title">Mi Dashboard</h1>
+        </div>
+
+        <div id="dashboard-section">
+            <div class="dashboard-grid">
+                <div class="stat-card">
+                    <h3>Próxima Cita</h3>
+                    <div class="info">Sin citas programadas</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Mi Estado</h3>
+                    <div class="info">Estable</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Medicamentos Activos</h3>
+                    <div class="number">3</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Mensajes No Leídos</h3>
+                    <div class="number">0</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2>Información General</h2>
+                </div>
+                <div class="card-body">
+                    <p><strong>Documento:</strong> <span id="paciente-doc">-</span></p>
+                    <p><strong>Teléfono:</strong> <span id="paciente-tel">-</span></p>
+                    <p><strong>Email:</strong> <span id="paciente-email">-</span></p>
+                    <p><strong>Médico Asignado:</strong> <span id="paciente-doc-asign">-</span></p>
+                </div>
+            </div>
+        </div>
+
+        <div id="agendar-turno" class="section-content" style="display: none;">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Agendar Nuevo Turno Médico</h2>
+                </div>
+                <div class="card-body">
+                    <form id="turnoForm">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                            <div class="form-group">
+                                <label for="turno_especialidad">Especialidad:</label>
+                                <select id="turno_especialidad" class="form-control" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ccc;"></select>
+                            </div>
+                            <div class="form-group">
+                                <label for="turno_medico">Médico:</label>
+                                <select id="turno_medico" class="form-control" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ccc;"></select>
+                            </div>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                            <div class="form-group">
+                                <label for="turno_fecha">Fecha:</label>
+                                <input type="date" id="turno_fecha" class="form-control" required style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ccc;">
+                            </div>
+                            <div class="form-group">
+                                <label for="turno_hora">Horario:</label>
+                                <input type="time" id="turno_hora" class="form-control" required style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ccc;">
+                            </div>
+                        </div>
+                        <div class="form-group" style="margin-bottom: 15px;">
+                            <label for="turno_motivo">Motivo de la Consulta:</label>
+                            <textarea id="turno_motivo" class="form-control" rows="3" placeholder="Breve descripción..." style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ccc; font-family: sans-serif;"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="padding: 10px 20px; background-color: #0288d1; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">Solicitar Turno</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div id="mi-info" class="section-content" style="display: none;">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Mis Datos Personales</h2>
+                </div>
+                <div class="card-body" id="info-view">
+                    <p><strong>Nombre Completo:</strong> <span id="info-nombre">-</span></p>
+                    <p><strong>Documento:</strong> <span id="info-doc">-</span></p>
+                    <p><strong>Fecha de Nacimiento:</strong> <span id="info-fecha">-</span></p>
+                    <p><strong>Teléfono:</strong> <span id="info-tel">-</span></p>
+                    <p><strong>Email:</strong> <span id="info-email">-</span></p>
+                    <p><strong>Dirección:</strong> <span id="info-dir">-</span></p>
+                    <p><strong>Obra Social:</strong> <span id="info-obra">-</span></p>
+                    <button class="btn btn-primary" onclick="editarInfo()" style="padding: 10px 20px; background-color: #0288d1; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">Editar Datos</button>
+                </div>
+                <div class="card-body" id="info-edit" style="display: none;">
+                    <form id="editarInfoForm">
+                        <div class="form-group" style="margin-bottom: 15px;">
+                            <label for="edit-nombre">Nombre Completo:</label>
+                            <input type="text" id="edit-nombre" class="form-control" required style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ccc;">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 15px;">
+                            <label for="edit-doc">Documento:</label>
+                            <input type="text" id="edit-doc" class="form-control" required style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ccc;">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 15px;">
+                            <label for="edit-fecha">Fecha de Nacimiento:</label>
+                            <input type="date" id="edit-fecha" class="form-control" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ccc;">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 15px;">
+                            <label for="edit-tel">Teléfono:</label>
+                            <input type="tel" id="edit-tel" class="form-control" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ccc;">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 15px;">
+                            <label for="edit-email">Email:</label>
+                            <input type="email" id="edit-email" class="form-control" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ccc;">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 15px;">
+                            <label for="edit-dir">Dirección:</label>
+                            <input type="text" id="edit-dir" class="form-control" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ccc;">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 15px;">
+                            <label for="edit-obra">Obra Social:</label>
+                            <input type="text" id="edit-obra" class="form-control" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ccc;">
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                            <button type="submit" class="btn btn-primary" style="padding: 10px 20px; background-color: #0288d1; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">Guardar Cambios</button>
+                            <button type="button" class="btn btn-secondary" onclick="cancelarEdicion()" style="padding: 10px 20px; background-color: #666; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">Cancelar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div id="citas" class="section-content" style="display: none;">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Mis Citas Médicas</h2>
+                </div>
+                <div class="card-body">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Hora</th>
+                                <th>Doctor</th>
+                                <th>Especialidad</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tablaCitasBody">
+                            <tr>
+                                <td colspan="5" style="text-align: center; padding: 20px;">No hay citas programadas</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="registrar-visita" class="section-content" style="display: none;">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Coordinar y Registrar Nueva Visita</h2>
+                </div>
+                <div class="card-body">
+                    <form id="visitaForm">
+                        <input type="hidden" id="visita_paciente_id" value="">
+
+                        <div class="form-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                            <div class="form-group">
+                                <label for="visitante_nombre">Nombre del Visitante:</label>
+                                <input type="text" id="visitante_nombre" placeholder="Nombre completo" class="form-control" required style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ccc;">
+                            </div>
+                            <div class="form-group">
+                                <label for="visitante_documento">Documento del Visitante:</label>
+                                <input type="text" id="visitante_documento" placeholder="DNI o Pasaporte" class="form-control" required style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ccc;">
+                            </div>
+                        </div>
+
+                        <div class="form-group" style="margin-bottom: 15px;">
+                            <label for="fecha_visita">Fecha de la Visita:</label>
+                            <input type="date" id="fecha_visita" class="form-control" required style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ccc;">
+                        </div>
+
+                        <div class="form-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                            <div class="form-group">
+                                <label for="hora_entrada">Hora de Entrada:</label>
+                                <input type="time" id="hora_entrada" class="form-control" required style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ccc;">
+                            </div>
+                            <div class="form-group">
+                                <label for="hora_salida">Hora de Salida:</label>
+                                <input type="time" id="hora_salida" class="form-control" required style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ccc;">
+                            </div>
+                        </div>
+
+                        <div class="form-group" style="margin-bottom: 15px;">
+                            <label for="relacion">Relación / Parentesco:</label>
+                            <input type="text" id="relacion" placeholder="Ej: Primo, Madre, Hermano" class="form-control" required style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ccc;">
+                        </div>
+
+                        <div class="form-group" style="margin-bottom: 15px;">
+                            <label for="observaciones">Observaciones adicionales:</label>
+                            <textarea id="observaciones" placeholder="Detalles de la visita..." class="form-control" rows="3" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ccc; font-family: sans-serif;"></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary" style="padding: 10px 20px; background-color: #0288d1; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">Registrar Visita</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card" style="margin-top: 25px;">
+                <div class="card-header">
+                    <h2>Historial de Visitas Coordinadas</h2>
+                </div>
+                <div class="card-body">
+                    <table class="table" id="tablaVisitas">
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Visitante</th>
+                                <th>Documento</th>
+                                <th>Entrada - Salida</th>
+                                <th>Vínculo</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="5" style="text-align: center; padding: 20px;">Cargando registros...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="historial" class="section-content" style="display: none;">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Historial Médico</h2>
+                </div>
+                <div class="card-body">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Diagnóstico</th>
+                                <th>Doctor</th>
+                                <th>Observaciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="4" style="text-align: center; padding: 20px;">No hay registros disponibles</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="mensajes" class="section-content" style="display: none;">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Mis Mensajes</h2>
+                </div>
+                <div class="card-body">
+                    <div style="text-align: center; padding: 40px;">
+                        <p>No tienes mensajes</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="recetas" class="section-content" style="display: none;">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Mis Recetas Médicas</h2>
+                </div>
+                <div class="card-body">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Medicamento</th>
+                                <th>Dosis</th>
+                                <th>Doctor</th>
+                                <th>Validez</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="5" style="text-align: center; padding: 20px;">No hay recetas disponibles</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../utils/utils.js"></script>
+document.getElementById('formVisita').addEventListener('submit', async function(e) {
+    <script src="paciente.js"></script>
+</body>
+</html>

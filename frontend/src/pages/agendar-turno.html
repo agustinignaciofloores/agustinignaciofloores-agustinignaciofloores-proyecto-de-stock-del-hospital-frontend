@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agendar Turno - Sistema Hospitalario</title>
+    <link rel="stylesheet" href="../../estilo.css">
+</head>
+<body class="patient-page">
+    <!-- Barra Superior -->
+    <div class="top-bar">
+        <h1>🏥 Sistema Hospitalario</h1>
+        <div class="user-info">
+            <span>Bienvenido, <strong id="usuarioName">Usuario</strong></span>
+            <button class="logout-btn" onclick="logout()">Cerrar Sesión</button>
+        </div>
+    </div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-logo"> Turnos</div>
+        <ul class="sidebar-menu">
+            <li><a href="#" onclick="showSection('agendar-turno')" class="active"> Agendar Turno</a></li>
+            <li><a href="#" onclick="showSection('mis-turnos')"> Mis Turnos</a></li>
+            <li><a href="#" onclick="showSection('disponibilidad')"> Disponibilidad Médicos</a></li>
+            <li><a href="#" onclick="showSection('especialidades')"> Especialidades</a></li>
+            <li><a href="#" onclick="showSection('informacion')"> Información</a></li>
+        </ul>
+    </aside>
+
+    <!-- Contenido Principal -->
+    <div class="main-content">
+        <div class="page-header">
+            <h1>Sistema de Agendamiento de Turnos</h1>
+        </div>
+
+        <!-- Sección Agendar Turno -->
+        <div id="agendar-turno" class="section-content">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Agendar Nuevo Turno</h2>
+                </div>
+                <form id="formAgendar" style="padding: 20px;">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="especialidad">Especialidad</label>
+                            <select id="especialidad" required onchange="cargarMedicos()">
+                                <option value="">Seleccionar especialidad...</option>
+                                <option value="cardiologia">Cardiología</option>
+                                <option value="neurologia">Neurología</option>
+                                <option value="dermatologia">Dermatología</option>
+                                <option value="gastroenterologia">Gastroenterología</option>
+                                <option value="otorrino">Otorrinolaringología</option>
+                                <option value="oftalmologia">Oftalmología</option>
+                                <option value="traumatologia">Traumatología</option>
+                                <option value="pediatria">Pediatría</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="medico">Médico</label>
+                            <select id="medico" required onchange="cargarFechasDisponibles()">
+                                <option value="">Seleccionar médico...</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="fecha">Fecha</label>
+                            <select id="fecha" required onchange="cargarHorariosDisponibles()">
+                                <option value="">Seleccionar fecha...</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="hora">Horario</label>
+                            <select id="hora" required>
+                                <option value="">Seleccionar horario...</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="motivo">Motivo de la Consulta</label>
+                        <textarea id="motivo" placeholder="Describe brevemente el motivo de tu visita..." required></textarea>
+                    </div>
+
+                    <div style="background: #dbeafe; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 4px; margin-bottom: 20px;">
+                        <p><strong>📍 Información de tu turno:</strong></p>
+                        <p id="infoTurno" style="margin: 10px 0 0 0;">Selecciona especialidad, médico, fecha y horario</p>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-success">Confirmar Turno</button>
+                        <button type="reset" class="btn btn-secondary">Limpiar Formulario</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Sección Mis Turnos -->
+        <div id="mis-turnos" class="section-content" style="display: none;">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Mis Turnos Agendados</h2>
+                </div>
+                <div class="card-body">
+                    <div id="listaTurnos"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección Disponibilidad -->
+        <div id="disponibilidad" class="section-content" style="display: none;">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Disponibilidad de Médicos - Próximos Días</h2>
+                </div>
+                <div class="card-body">
+                    <div id="disponibilidadContent"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección Especialidades -->
+        <div id="especialidades" class="section-content" style="display: none;">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Especialidades Disponibles</h2>
+                </div>
+                <div class="card-body">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+                        <div style="border: 1px solid #ddd; padding: 20px; border-radius: 8px;">
+                            <h3>❤️ Cardiología</h3>
+                            <p><strong>Descripción:</strong> Tratamiento del corazón y enfermedades cardiovasculares.</p>
+                            <p><strong>Médicos:</strong> 3 disponibles</p>
+                        </div>
+                        <div style="border: 1px solid #ddd; padding: 20px; border-radius: 8px;">
+                            <h3>🧠 Neurología</h3>
+                            <p><strong>Descripción:</strong> Diagnóstico y tratamiento de enfermedades del sistema nervioso.</p>
+                            <p><strong>Médicos:</strong> 2 disponibles</p>
+                        </div>
+                        <div style="border: 1px solid #ddd; padding: 20px; border-radius: 8px;">
+                            <h3>🩹 Dermatología</h3>
+                            <p><strong>Descripción:</strong> Cuidado y tratamiento de la piel.</p>
+                            <p><strong>Médicos:</strong> 2 disponibles</p>
+                        </div>
+                        <div style="border: 1px solid #ddd; padding: 20px; border-radius: 8px;">
+                            <h3>🔍 Gastroenterología</h3>
+                            <p><strong>Descripción:</strong> Tratamiento del aparato digestivo.</p>
+                            <p><strong>Médicos:</strong> 2 disponibles</p>
+                        </div>
+                        <div style="border: 1px solid #ddd; padding: 20px; border-radius: 8px;">
+                            <h3>👂 Otorrinolaringología</h3>
+                            <p><strong>Descripción:</strong> Enfermedades de oído, nariz y garganta.</p>
+                            <p><strong>Médicos:</strong> 2 disponibles</p>
+                        </div>
+                        <div style="border: 1px solid #ddd; padding: 20px; border-radius: 8px;">
+                            <h3>👁️ Oftalmología</h3>
+                            <p><strong>Descripción:</strong> Cuidado y tratamiento de los ojos.</p>
+                            <p><strong>Médicos:</strong> 2 disponibles</p>
+                        </div>
+                        <div style="border: 1px solid #ddd; padding: 20px; border-radius: 8px;">
+                            <h3>🦴 Traumatología</h3>
+                            <p><strong>Descripción:</strong> Tratamiento de fracturas y lesiones óseas.</p>
+                            <p><strong>Médicos:</strong> 3 disponibles</p>
+                        </div>
+                        <div style="border: 1px solid #ddd; padding: 20px; border-radius: 8px;">
+                            <h3>👶 Pediatría</h3>
+                            <p><strong>Descripción:</strong> Atención médica de niños y recién nacidos.</p>
+                            <p><strong>Médicos:</strong> 2 disponibles</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección Información -->
+        <div id="informacion" class="section-content" style="display: none;">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Información Importante</h2>
+                </div>
+                <div class="card-body">
+                    <div style="background: #f0fdf4; border-left: 4px solid #22c55e; padding: 15px; margin-bottom: 20px; border-radius: 4px;">
+                        <p><strong>✅ Cómo Agendar un Turno:</strong></p>
+                        <ol style="margin-left: 20px; margin-top: 10px;">
+                            <li>Selecciona la especialidad que necesitas</li>
+                            <li>Elige el médico de tu preferencia</li>
+                            <li>Selecciona fecha y horario disponible</li>
+                            <li>Describe brevemente el motivo de tu consulta</li>
+                            <li>Confirma tu turno</li>
+                        </ol>
+                    </div>
+
+                    <div style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 15px; margin-bottom: 20px; border-radius: 4px;">
+                        <p><strong>⚠️ Política de Cancelación:</strong></p>
+                        <ul style="margin-left: 20px; margin-top: 10px;">
+                            <li>Puedes cancelar tu turno hasta 24 horas antes</li>
+                            <li>Las cancelaciones de último momento no se reembolsan</li>
+                            <li>En caso de emergencia, comunícate con recepción</li>
+                        </ul>
+                    </div>
+
+                    <div style="background: #dbeafe; border-left: 4px solid #3b82f6; padding: 15px; margin-bottom: 20px; border-radius: 4px;">
+                        <p><strong>ℹ️ Horarios de Atención:</strong></p>
+                        <p style="margin: 10px 0;">
+                            <strong>Lunes a Viernes:</strong> 8:00 - 18:00 hs<br>
+                            <strong>Sábados:</strong> 9:00 - 13:00 hs<br>
+                            <strong>Domingos y Feriados:</strong> Cerrado
+                        </p>
+                    </div>
+
+                    <div style="background: #fee2e2; border-left: 4px solid #ef4444; padding: 15px; border-radius: 4px;">
+                        <p><strong>📞 Emergencias:</strong></p>
+                        <p style="margin: 10px 0;">
+                            En caso de emergencia médica, llama al <strong>911</strong> o dirígete a la sala de emergencias.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../utils/utils.js"></script>
+    <script>
+        // Base de datos de médicos por especialidad
+        const medicosData = {
+            cardiologia: [
+                { id: 1, nombre: 'Dr. Carlos López', consultorio: '301', disponibilidad: ['Lunes', 'Miércoles', 'Viernes'] },
+                { id: 2, nombre: 'Dra. María González', consultorio: '302', disponibilidad: ['Martes', 'Jueves'] },
+                { id: 3, nombre: 'Dr. Pedro Martínez', consultorio: '303', disponibilidad: ['Lunes', 'Miércoles', 'Viernes'] }
+            ],
+            neurologia: [
+                { id: 4, nombre: 'Dr. Juan Rodríguez', consultorio: '401', disponibilidad: ['Lunes', 'Miércoles', 'Viernes'] },
+                { id: 5, nombre: 'Dra. Ana Pérez', consultorio: '402', disponibilidad: ['Martes', 'Jueves'] }
+            ],
+            dermatologia: [
+                { id: 6, nombre: 'Dra. Lucía Fernández', consultorio: '501', disponibilidad: ['Martes', 'Jueves'] },
+                { id: 7, nombre: 'Dr. Ricardo Silva', consultorio: '502', disponibilidad: ['Lunes', 'Miércoles', 'Viernes'] }
+            ],
+            gastroenterologia: [
+                { id: 8, nombre: 'Dr. Jorge Díaz', consultorio: '601', disponibilidad: ['Lunes', 'Miércoles', 'Viernes'] },
+                { id: 9, nombre: 'Dra. Patricia Ruiz', consultorio: '602', disponibilidad: ['Martes', 'Jueves'] }
+            ],
+            otorrino: [
+                { id: 10, nombre: 'Dr. Francisco García', consultorio: '701', disponibilidad: ['Lunes', 'Miércoles', 'Viernes'] },
+                { id: 11, nombre: 'Dra. Isabel Moreno', consultorio: '702', disponibilidad: ['Martes', 'Jueves'] }
+            ],
+            oftalmologia: [
+                { id: 12, nombre: 'Dr. Manuel Castro', consultorio: '801', disponibilidad: ['Lunes', 'Miércoles', 'Viernes'] },
+                { id: 13, nombre: 'Dra. Carmen Sánchez', consultorio: '802', disponibilidad: ['Martes', 'Jueves'] }
+            ],
+            traumatologia: [
+                { id: 14, nombre: 'Dr. Ángel Vega', consultorio: '901', disponibilidad: ['Lunes', 'Miércoles', 'Viernes'] },
+                { id: 15, nombre: 'Dr. Luis Acosta', consultorio: '902', disponibilidad: ['Martes', 'Jueves'] },
+                { id: 16, nombre: 'Dra. Rosa Flores', consultorio: '903', disponibilidad: ['Lunes', 'Miércoles', 'Viernes'] }
+            ],
+            pediatria: [
+                { id: 17, nombre: 'Dra. Sofía Guzmán', consultorio: '1001', disponibilidad: ['Lunes', 'Miércoles', 'Viernes'] },
+                { id: 18, nombre: 'Dr. Eduardo Vargas', consultorio: '1002', disponibilidad: ['Martes', 'Jueves'] }
+            ]
+        };
+
+        const horariosDisponibles = ['09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30'];
+
+        function showSection(sectionId) {
+            document.querySelectorAll('.section-content').forEach(el => el.style.display = 'none');
+            document.getElementById(sectionId).style.display = 'block';
+
+            if (sectionId === 'mis-turnos') {
+                cargarMisTurnos();
+            } else if (sectionId === 'disponibilidad') {
+                cargarDisponibilidad();
+            }
+        }
+
+        function cargarMedicos() {
+            const especialidad = document.getElementById('especialidad').value;
+            const selectMedico = document.getElementById('medico');
+            selectMedico.innerHTML = '<option value="">Seleccionar médico...</option>';
+
+            if (especialidad && medicosData[especialidad]) {
+                medicosData[especialidad].forEach(medico => {
+                    const option = document.createElement('option');
+                    option.value = medico.id;
+                    option.textContent = `${medico.nombre} (Consultorio ${medico.consultorio})`;
+                    selectMedico.appendChild(option);
+                });
+            }
+
+            document.getElementById('fecha').innerHTML = '<option value="">Seleccionar fecha...</option>';
+            document.getElementById('hora').innerHTML = '<option value="">Seleccionar horario...</option>';
+        }
+
+        function cargarFechasDisponibles() {
+            const medicoid = document.getElementById('medico').value;
+            const especialidad = document.getElementById('especialidad').value;
+            const selectFecha = document.getElementById('fecha');
+            selectFecha.innerHTML = '<option value="">Seleccionar fecha...</option>';
+
+            if (medicoid && especialidad) {
+                const medico = medicosData[especialidad].find(m => m.id == medicoid);
+                const hoy = new Date();
+
+                // Próximos 14 días
+                for (let i = 1; i <= 14; i++) {
+                    const fecha = new Date(hoy);
+                    fecha.setDate(fecha.getDate() + i);
+                    const diaSemana = fecha.toLocaleDateString('es-ES', { weekday: 'long' });
+                    const formatoFecha = fecha.toLocaleDateString('es-ES');
+
+                    // Solo mostrar días disponibles del médico
+                    const diaCapitalizado = diaSemana.charAt(0).toUpperCase() + diaSemana.slice(1);
+                    if (medico.disponibilidad.includes(diaCapitalizado)) {
+                        const option = document.createElement('option');
+                        option.value = formatoFecha;
+                        option.textContent = `${diaCapitalizado} - ${formatoFecha}`;
+                        selectFecha.appendChild(option);
+                    }
+                }
+            }
+
+            document.getElementById('hora').innerHTML = '<option value="">Seleccionar horario...</option>';
+        }
+
+        function cargarHorariosDisponibles() {
+            const selectHora = document.getElementById('hora');
+            selectHora.innerHTML = '<option value="">Seleccionar horario...</option>';
+
+            horariosDisponibles.forEach(hora => {
+                const option = document.createElement('option');
+                option.value = hora;
+                option.textContent = hora;
+                selectHora.appendChild(option);
+            });
+
+            actualizarInfoTurno();
+        }
+
+        function actualizarInfoTurno() {
+            const especialidad = document.getElementById('especialidad').value;
+            const medicoId = document.getElementById('medico').value;
+            const fecha = document.getElementById('fecha').value;
+            const hora = document.getElementById('hora').value;
+
+            let info = '';
+            if (especialidad && medicoId && fecha && hora) {
+                const medico = medicosData[especialidad].find(m => m.id == medicoId);
+                const nomEspecialidad = document.getElementById('especialidad').options[document.getElementById('especialidad').selectedIndex].text;
+                info = `<strong>Especialidad:</strong> ${nomEspecialidad}<br>
+                        <strong>Médico:</strong> ${medico.nombre}<br>
+                        <strong>Consultorio:</strong> ${medico.consultorio}<br>
+                        <strong>Fecha:</strong> ${fecha}<br>
+                        <strong>Hora:</strong> ${hora}`;
+            } else {
+                info = 'Selecciona especialidad, médico, fecha y horario';
+            }
+            document.getElementById('infoTurno').innerHTML = info;
+        }
+
+        async function cargarMisTurnos() {
+            const listaTurnos = document.getElementById('listaTurnos');
+
+            const usuarioLogueado = JSON.parse(localStorage.getItem('usuarioLogueado') || 'null');
+            if (!usuarioLogueado?.id) {
+                listaTurnos.innerHTML = '<p style="text-align: center; padding: 40px; color: #999;">No hay un usuario logueado para consultar turnos</p>';
+                return;
+            }
+
+            let turnos = [];
+
+            try {
+                const response = await fetch(window.buildApiUrl(`/turnos/${usuarioLogueado.id}`));
+                if (!response.ok) throw new Error('No se pudieron cargar los turnos');
+                turnos = await response.json();
+            } catch (error) {
+                listaTurnos.innerHTML = '<p style="text-align: center; padding: 40px; color: #999;">No se pudieron cargar los turnos</p>';
+                return;
+            }
+
+            if (turnos.length === 0) {
+                listaTurnos.innerHTML = '<p style="text-align: center; padding: 40px; color: #999;">No tienes turnos agendados</p>';
+                return;
+            }
+
+            let html = '<table class="table"><thead><tr><th>Especialidad</th><th>Médico</th><th>Fecha</th><th>Hora</th><th>Motivo</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>';
+
+            turnos.forEach((turno) => {
+                const fecha = new Date(turno.fecha);
+                const hoy = new Date();
+                hoy.setHours(0, 0, 0, 0);
+                let estado = 'Confirmado';
+                let colorEstado = '#48bb78';
+
+                if (fecha < hoy) {
+                    estado = 'Completado';
+                    colorEstado = '#718096';
+                }
+
+                html += `<tr>
+                    <td>${turno.especialidad}</td>
+                    <td>${turno.medico_nombre || turno.medico || '-'}</td>
+                    <td>${turno.fecha}</td>
+                    <td>${turno.hora}</td>
+                    <td>${(turno.motivo || '').substring(0, 30)}...</td>
+                    <td><span style="background: ${colorEstado}; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: 600;">${estado}</span></td>
+                    <td>
+                        ${estado === 'Confirmado' ? `<button onclick="cancelarTurno(${turno.id})" class="btn btn-danger btn-small">Cancelar</button>` : '-'}
+                    </td>
+                </tr>`;
+            });
+
+            html += '</tbody></table>';
+            listaTurnos.innerHTML = html;
+        }
+
+        async function cancelarTurno(idTurno) {
+            if (confirm('¿Estás seguro de que deseas cancelar este turno?')) {
+                try {
+                    const response = await fetch(window.buildApiUrl(`/turnos/${idTurno}`), { method: 'DELETE' });
+                    if (!response.ok) throw new Error('No se pudo cancelar el turno');
+                    await cargarMisTurnos();
+                    alert('Turno cancelado correctamente');
+                } catch (error) {
+                    alert(error.message || 'No se pudo cancelar el turno');
+                }
+            }
+        }
+
+        function cargarDisponibilidad() {
+            const hoy = new Date();
+            let html = '';
+
+            for (let i = 1; i <= 3; i++) {
+                const fecha = new Date(hoy);
+                fecha.setDate(fecha.getDate() + i);
+                const diaSemana = fecha.toLocaleDateString('es-ES', { weekday: 'long' }).toUpperCase();
+                const formatoFecha = fecha.toLocaleDateString('es-ES');
+
+                html += `<h3 style="margin-top: 25px; margin-bottom: 15px;">📅 ${diaSemana} - ${formatoFecha}</h3>`;
+                html += '<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px;">';
+
+                Object.keys(medicosData).forEach(especialidad => {
+                    medicosData[especialidad].forEach(medico => {
+                        const diaCapitalizado = diaSemana.charAt(0) + diaSemana.slice(1).toLowerCase();
+                        if (medico.disponibilidad.includes(diaCapitalizado)) {
+                            html += `<div style="border: 1px solid #ddd; padding: 15px; border-radius: 8px; background: white;">
+                                <p><strong>${medico.nombre}</strong></p>
+                                <p style="font-size: 13px; color: #666;">Especialidad: ${especialidad}</p>
+                                <p style="font-size: 13px; color: #666;">Consultorio: ${medico.consultorio}</p>
+                                <p style="font-size: 13px; color: #48bb78; font-weight: 600;">✓ Disponible</p>
+                            </div>`;
+                        }
+                    });
+                });
+
+                html += '</div>';
+            }
+
+            document.getElementById('disponibilidadContent').innerHTML = html;
+        }
+
+        // Manejar envío del formulario
+        document.getElementById('formAgendar').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const usuarioLogueado = JSON.parse(localStorage.getItem('usuarioLogueado') || 'null');
+            if (!usuarioLogueado?.id) {
+                alert('Necesitas iniciar sesión para agendar un turno');
+                return;
+            }
+
+            const especialidad = document.getElementById('especialidad').value;
+            const medicoId = document.getElementById('medico').value;
+            const fecha = document.getElementById('fecha').value;
+            const hora = document.getElementById('hora').value;
+            const motivo = document.getElementById('motivo').value;
+
+            const medico = medicosData[especialidad].find(m => m.id == medicoId);
+            const nomEspecialidad = document.getElementById('especialidad').options[document.getElementById('especialidad').selectedIndex].text;
+
+            try {
+                const response = await fetch(window.buildApiUrl('/turnos'), {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        usuario_id: usuarioLogueado.id,
+                        medico_id: medicoId,
+                        especialidad: nomEspecialidad,
+                        fecha,
+                        hora,
+                        motivo
+                    })
+                });
+
+                if (!response.ok) throw new Error('No se pudo agendar el turno');
+
+                alert('¡Turno agendado correctamente!\n\nEspecialidad: ' + nomEspecialidad + '\nMédico: ' + medico.nombre + '\nFecha: ' + fecha + '\nHora: ' + hora);
+                this.reset();
+                document.getElementById('hora').innerHTML = '<option value="">Seleccionar horario...</option>';
+                document.getElementById('infoTurno').textContent = 'Selecciona especialidad, médico, fecha y horario';
+            } catch (error) {
+                alert(error.message || 'No se pudo agendar el turno');
+            }
+        });
+
+        // Actualizar info al cambiar selectores
+        document.getElementById('especialidad').addEventListener('change', actualizarInfoTurno);
+        document.getElementById('medico').addEventListener('change', actualizarInfoTurno);
+        document.getElementById('fecha').addEventListener('change', actualizarInfoTurno);
+        document.getElementById('hora').addEventListener('change', actualizarInfoTurno);
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const usuarioLogueado = JSON.parse(localStorage.getItem('usuarioLogueado') || 'null');
+            document.getElementById('usuarioName').textContent = usuarioLogueado?.nombre || usuarioLogueado?.usuario || 'Usuario';
+        });
+    </script>
+</body>
+</html>

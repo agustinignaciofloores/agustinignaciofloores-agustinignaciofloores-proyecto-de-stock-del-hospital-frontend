@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestionar Personas - Sistema Hospitalario</title>
+    <link rel="stylesheet" href="../../estilo.css">
+</head>
+<body class="admin-page">
+    <div class="top-bar">
+        <h1> Sistema Hospitalario</h1>
+        <div class="user-info">
+            <span>Bienvenido, <strong>Administrador</strong></span>
+            <button class="logout-btn" onclick="logout()">Cerrar Sesión</button>
+        </div>
+    </div>
+
+    <aside class="sidebar">
+        <div class="sidebar-logo"> Hospital</div>
+        <ul class="sidebar-menu">
+            <li><a href="dashboard.html"> Dashboard</a></li>
+            <li><a href="gestionar-personas.html" class="active"> Personas</a></li>
+            <li><a href="gestionar-pacientes.html"> Pacientes</a></li>
+            <li><a href="gestionar-personal.html"> Personal</a></li>
+            <li><a href="gestionar-roles.html"> Roles</a></li>
+            <li><a href="gestionar-patologias.html"> Patologías</a></li>
+            <li><a href="gestionar-menus.html"> Menús</a></li>
+            <li><a href="gestionar-productos.html"> Productos</a></li>
+            <li><a href="gestionar-proveedores.html"> Proveedores</a></li>
+            <li><a href="gestionar-movimientos.html"> Movimientos</a></li>
+            <li><a href="gestionar-inventario.html"> Inventario</a></li>
+        </ul>
+    </aside>
+
+    <div class="main-content">
+        <div class="page-header">
+            <h1>Gestionar Personas</h1>
+            <button class="btn btn-primary" onclick="if(typeof limpiarFormularioPersona === 'function') limpiarFormularioPersona(); openModal('modalPersona')">+ Nueva Persona</button>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h2>Lista de Personas</h2>
+            </div>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>DNI</th>
+                            <th>Nombre</th>
+                            <th>Apellido</th>
+                            <th>Teléfono</th>
+                            <th>Email</th>
+                            <th>Sexo</th>
+                            <th>Discapacidad</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tablaPersonas"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalPersona" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="tituloModalPersona">Nueva Persona</h2>
+                <button class="modal-close" onclick="closeModal('modalPersona'); if(typeof limpiarFormularioPersona === 'function') limpiarFormularioPersona();">&times;</button>
+            </div>
+            <form id="formPersona" onsubmit="guardarPersona(event)">
+                <input type="hidden" id="id_persona" name="id_persona">
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="nombre">Nombre</label>
+                        <input type="text" id="nombre" name="nombre" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="apellido">Apellido</label>
+                        <input type="text" id="apellido" name="apellido" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="dni">DNI</label>
+                        <input type="text" id="dni" name="dni" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="sexo">Sexo</label>
+                        <select id="sexo" name="sexo" required>
+                            <option value="">Seleccionar</option>
+                            <option value="Masculino">Masculino</option>
+                            <option value="Femenino">Femenino</option>
+                            <option value="Otro">Otro</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="discapacidad">Discapacidad</label>
+                        <select id="discapacidad" name="discapacidad">
+                            <option value="">Ninguna</option>
+                            <option value="Discapacidad Motriz">Discapacidad Motriz</option>
+                            <option value="Discapacidad Visual">Discapacidad Visual</option>
+                            <option value="Discapacidad Auditiva">Discapacidad Auditiva</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="fecha_nac">Fecha de Nacimiento</label>
+                        <input type="date" id="fecha_nac" name="fecha_nac" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="telefono">Teléfono</label>
+                        <input type="text" id="telefono" name="telefono">
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="estado_civil">Estado Civil</label>
+                        <select id="estado_civil" name="estado_civil">
+                            <option value="">Seleccionar</option>
+                            <option value="Soltero/a">Soltero/a</option>
+                            <option value="Casado/a">Casado/a</option>
+                            <option value="Divorciado/a">Divorciado/a</option>
+                            <option value="Viudo/a">Viudo/a</option>
+                            <option value="Unión de hecho">Unión de hecho</option>
+                            <option value="No quiero decir">No quiero decir</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="etnia">Etnia</label>
+                        <input type="text" id="etnia" name="etnia">
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-success">Guardar</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('modalPersona'); if(typeof limpiarFormularioPersona === 'function') limpiarFormularioPersona();">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="../utils/utils.js"></script>
+    <script src="personas.js"></script>
+</body>
+</html>

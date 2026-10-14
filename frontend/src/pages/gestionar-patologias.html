@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestionar Patologías - Sistema Hospitalario</title>
+    <link rel="stylesheet" href="../../estilo.css">
+</head>
+<body class="admin-page">
+    <div class="top-bar">
+        <h1> Sistema Hospitalario</h1>
+        <div class="user-info">
+            <span>Bienvenido, <strong>Administrador</strong></span>
+            <button class="logout-btn" onclick="logout()">Cerrar Sesión</button>
+        </div>
+    </div>
+
+    <aside class="sidebar">
+        <div class="sidebar-logo"> Hospital</div>
+        <ul class="sidebar-menu">
+            <li><a href="dashboard.html"> Dashboard</a></li>
+            <li><a href="gestionar-personas.html"> Personas</a></li>
+            <li><a href="gestionar-pacientes.html"> Pacientes</a></li>
+            <li><a href="gestionar-personal.html"> Personal</a></li>
+            <li><a href="gestionar-roles.html"> Roles</a></li>
+            <li><a href="gestionar-patologias.html" class="active"> Patologías</a></li>
+            <li><a href="gestionar-menus.html"> Menús</a></li>
+            <li><a href="gestionar-productos.html"> Productos</a></li>
+            <li><a href="gestionar-proveedores.html"> Proveedores</a></li>
+            <li><a href="gestionar-movimientos.html"> Movimientos</a></li>
+            <li><a href="gestionar-inventario.html"> Inventario</a></li>
+        </ul>
+    </aside>
+
+    <div class="main-content">
+        <div class="page-header">
+            <h1>Gestionar Patologías</h1>
+            <button class="btn btn-primary" onclick="if(typeof limpiarFormularioPatologia === 'function') limpiarFormularioPatologia(); openModal('modalPatologia')">+ Nueva Patología</button>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h2>Lista de Patologías</h2>
+            </div>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Descripción</th>
+                            <th>¿Es Discapacidad?</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tablaPatologias"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalPatologia" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="tituloModalPatologia">Nueva Patología</h2>
+                <button class="modal-close" onclick="closeModal('modalPatologia'); if(typeof limpiarFormularioPatologia === 'function') limpiarFormularioPatologia();">&times;</button>
+            </div>
+            <form id="formPatologia" onsubmit="guardarPatologia(event)">
+                <input type="hidden" id="id_patologia" name="id_patologia">
+
+                <div class="form-group">
+                    <label for="nombre_patologia">Nombre</label>
+                    <input type="text" id="nombre_patologia" name="nombre_patologia" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="descripcion_patologia">Descripción</label>
+                    <textarea id="descripcion_patologia" name="descripcion_patologia" rows="4"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="es_discapacidad">
+                        <input type="checkbox" id="es_discapacidad" name="es_discapacidad">
+                        Es una discapacidad
+                    </label>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-success">Guardar</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('modalPatologia'); if(typeof limpiarFormularioPatologia === 'function') limpiarFormularioPatologia();">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="../utils/utils.js"></script>
+    <script src="patologias.js"></script>
+</body>
+</html>

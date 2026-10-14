@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestionar Habitaciones - Sistema Hospitalario</title>
+    <link rel="stylesheet" href="../../estilo.css">
+</head>
+<body class="admin-page">
+    <div class="top-bar">
+        <h1> Sistema Hospitalario</h1>
+        <div class="user-info">
+            <span>Bienvenido, <strong>Administrador</strong></span>
+            <button class="logout-btn" onclick="logout()">Cerrar Sesión</button>
+        </div>
+    </div>
+
+    <aside class="sidebar">
+        <div class="sidebar-logo"> Hospital</div>
+        <ul class="sidebar-menu"> 
+            <li><a href="gestionar-habitaciones.html" class="active"> Habitaciones</a></li>
+            <li><a href="gestionar-personas.html"> Personas</a></li>
+            <li><a href="gestionar-pacientes.html"> Pacientes</a></li>
+            <li><a href="gestionar-personal.html"> Personal</a></li>
+            <li><a href="gestionar-usuarios.html"> Usuarios</a></li>
+            <li><a href="gestionar-roles.html"> Roles</a></li>
+            <li><a href="gestionar-proveedores.html"> Proveedores</a></li>
+            <li><a href="gestionar-productos.html"> Productos</a></li>
+            <li><a href="gestionar-inventario.html"> Inventario</a></li>
+        </ul>
+    </aside>
+
+    <div class="main-content">
+        <div class="page-header">
+            <h1>Gestionar Habitaciones</h1>
+            <button class="btn btn-primary" onclick="if(typeof limpiarFormularioHabitacion === 'function') limpiarFormularioHabitacion(); openModal('modalHabitacion')">+ Nueva Habitación</button>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h2>Lista de Habitaciones</h2>
+            </div>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Número</th>
+                            <th>Capacidad</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tablaHabitaciones"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalHabitacion" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="tituloModalHabitacion">Nueva Habitación</h2>
+                <button class="modal-close" onclick="closeModal('modalHabitacion'); if(typeof limpiarFormularioHabitacion === 'function') limpiarFormularioHabitacion();">&times;</button>
+            </div>
+            <form id="formHabitacion" onsubmit="guardarHabitacion(event)">
+                <input type="hidden" id="id_habitacion" name="id_habitacion">
+                
+                <div class="form-group">
+                    <label for="numero_habitacion">Número de Habitación</label>
+                    <input type="text" id="numero_habitacion" name="numero_habitacion" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="capacidad_habitacion">Capacidad</label>
+                        <input type="number" id="capacidad_habitacion" name="capacidad_habitacion" min="1" value="1" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="estado_habitacion">Estado</label>
+                        <select id="estado_habitacion" name="estado_habitacion" required>
+                            <option value="Disponible">Disponible</option>
+                            <option value="Ocupada">Ocupada</option>
+                            <option value="Mantenimiento">Mantenimiento</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-success">Guardar</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('modalHabitacion'); if(typeof limpiarFormularioHabitacion === 'function') limpiarFormularioHabitacion();">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="../utils/utils.js"></script>
+    <script src="habitaciones.js"></script>
+</body>
+</html>

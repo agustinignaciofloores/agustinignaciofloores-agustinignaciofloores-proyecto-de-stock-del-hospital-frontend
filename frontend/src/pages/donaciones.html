@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Donaciones - Hospital</title>
+    <link rel="stylesheet" href="../../estilo.css">
+</head>
+<body class="donation-page">
+    <!-- Barra Superior -->
+    <div class="top-bar">
+        <h1>🏥 Sistema Hospitalario</h1>
+        <div class="user-info">
+            <span>Portal de Donaciones Hospitalarias</span>
+            <button class="logout-btn" onclick="logout()">Salir</button>
+        </div> 
+    </div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-logo"> Donaciones</div>
+        <ul class="sidebar-menu">
+            <li><a href="#" onclick="showSection('dashboard-section', this)" class="active"> Inicio</a></li>
+            <li><a href="#" onclick="showSection('tipos-donacion', this)"> Tipos de Donación</a></li>
+            <li><a href="#" onclick="showSection('registrar-donante', this)"> Registrarse como Donante</a></li>
+            <li><a href="#" onclick="showSection('necesidades', this)"> Necesidades Actuales</a></li>
+            <li><a href="#" onclick="showSection('mis-donaciones', this)"> Mis Donaciones</a></li>
+            <li><a href="#" onclick="showSection('requisitos', this)"> Requisitos</a></li>
+            <li><a href="#" onclick="showSection('contacto', this)"> Contacto</a></li>
+        </ul>
+    </aside>
+
+    <!-- Contenido Principal -->
+    <div class="main-content">
+        <div class="page-header">
+            <h1>Portal de Donaciones del Hospital</h1>
+        </div>
+
+        <!-- Sección Principal -->
+        <div id="dashboard-section" class="section-content">
+            <div class="dashboard-grid">
+                <div class="stat-card"><h3>Donaciones Este Mes</h3><div class="number">0</div></div>
+                <div class="stat-card"><h3>Donantes Activos</h3><div class="number">0</div></div>
+                <div class="stat-card"><h3>Necesidades Críticas</h3><div class="number">0</div></div>
+                <div class="stat-card"><h3>Vidas Salvadas</h3><div class="number">0</div></div>
+            </div>
+
+            <div class="card">
+                <div class="card-header"><h2>¡Tu Generosidad Salva Vidas!</h2></div>
+                <div class="card-body">
+                    <p style="font-size: 16px; line-height: 1.6;">El Hospital está comprometido con la salud de nuestra comunidad. Las donaciones son vitales para proporcionar transfusiones de sangre, órganos, tejidos y otros recursos médicos esenciales a nuestros pacientes.</p>
+                    <p style="margin-top: 15px;"><strong>¿Quieres ayudar?</strong> Haz clic en "Registrarse como Donante" para comenzar.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Secciones Ocultas (Clase section-content definida por defecto) -->
+        <div id="tipos-donacion" class="section-content" style="display: none;">
+            <div class="card">
+                <div class="card-header"><h2>Tipos de Donación</h2></div>
+                <div class="card-body">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+                        <!-- Bloques de tipos de donación -->
+                        <div style="border: 1px solid #ddd; padding: 20px; border-radius: 8px;"><h3>🩸 Donación de Sangre</h3><p>Se extrae aproximadamente 450 ml que pueden salvar hasta 3 vidas.</p></div>
+                        <div style="border: 1px solid #ddd; padding: 20px; border-radius: 8px;"><h3>💧 Donación de Plasma</h3><p>Esencial para quemados, transfusiones y operaciones.</p></div>
+                        <div style="border: 1px solid #ddd; padding: 20px; border-radius: 8px;"><h3>🧬 Donación de Médula Ósea</h3><p>Crucial para pacientes con cáncer de sangre y leucemia.</p></div>
+                        <div style="border: 1px solid #ddd; padding: 20px; border-radius: 8px;"><h3>💰 Donación Económica</h3><p>Tu contribución ayuda a mejorar la infraestructura.</p></div>
+                        <div style="border: 1px solid #ddd; padding: 20px; border-radius: 8px;"><h3>👥 Donación de Órganos</h3><p>La decisión más noble: donar órganos al fallecer.</p></div>
+                        <div style="border: 1px solid #ddd; padding: 20px; border-radius: 8px;"><h3>🏥 Donación de Tejidos</h3><p>Permiten la reconstrucción y transplantes.</p></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección Registrarse -->
+        <div id="registrar-donante" class="section-content" style="display: none;">
+            <div class="card">
+                <div class="card-header"><h2>Registrarse como Donante</h2></div>
+                <form id="formDonante" style="padding: 20px;">
+                    <div class="form-group"><label>Nombre Completo</label><input type="text" required></div>
+                    <div class="form-group"><label>DNI/Pasaporte</label><input type="text" required></div>
+                    <div class="form-group"><label>Fecha de Nacimiento</label><input type="date" required></div>
+                    <div class="form-group"><label>Grupo de Sangre</label><select required><option value="">Seleccionar...</option><option value="O+">O+</option></select></div>
+                    <div class="form-actions"><button type="submit" class="btn btn-success">Registrarme</button></div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Secciones adicionales omitidas por brevedad (pero mantienen la estructura anterior) -->
+        <div id="necesidades" class="section-content" style="display: none;"><div class="card"><h2>Necesidades</h2></div></div>
+        <div id="mis-donaciones" class="section-content" style="display: none;"><div class="card"><h2>Historial</h2></div></div>
+        <div id="requisitos" class="section-content" style="display: none;"><div class="card"><h2>Requisitos</h2></div></div>
+        <div id="contacto" class="section-content" style="display: none;"><div class="card"><h2>Contacto</h2></div></div>
+    </div>
+
+    <script src="../utils/utils.js"></script>
+    <script>
+        function showSection(sectionId, element) {
+            // Ocultar todas las secciones
+            document.querySelectorAll('.section-content').forEach(el => el.style.display = 'none');
+            
+            // Mostrar la seleccionada
+            const target = document.getElementById(sectionId);
+            if (target) target.style.display = 'block';
+
+            // Gestión de clase active en el menú
+            document.querySelectorAll('.sidebar-menu a').forEach(a => a.classList.remove('active'));
+            if (element) element.classList.add('active');
+        }
+
+        document.getElementById('formDonante').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const campos = this.querySelectorAll('input, select');
+            const payload = {
+                nombre_donante: campos[0].value,
+                documento: campos[1].value,
+                fecha_nacimiento: campos[2].value,
+                grupo_sanguineo: campos[3].value,
+                tipo_donacion: 'sangre'
+            };
+
+            try {
+                const response = await fetch(window.buildApiUrl('/donaciones'), {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) throw new Error('No se pudo registrar la donación');
+
+                alert('¡Registro exitoso!');
+                this.reset();
+            } catch (error) {
+                alert(error.message || 'No se pudo registrar la donación');
+            }
+        });
+    </script>
+</body>
+</html>

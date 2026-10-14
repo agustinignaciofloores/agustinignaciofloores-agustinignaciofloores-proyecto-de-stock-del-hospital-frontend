@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestionar Pacientes - Sistema Hospitalario</title>
+    <link rel="stylesheet" href="../../estilo.css">
+</head>
+<body class="admin-page">
+    <div class="top-bar">
+        <h1> Sistema Hospitalario</h1>
+        <div class="user-info">
+            <span>Bienvenido, <strong>Administrador</strong></span>
+            <button class="logout-btn" onclick="logout()">Cerrar Sesión</button>
+        </div>
+    </div>
+
+    <aside class="sidebar">
+        <div class="sidebar-logo"> Hospital</div>
+        <ul class="sidebar-menu">
+            <li><a href="dashboard.html"> Dashboard</a></li>
+            <li><a href="gestionar-personas.html"> Personas</a></li>
+            <li><a href="gestionar-pacientes.html" class="active"> Pacientes</a></li>
+            <li><a href="gestionar-personal.html"> Personal</a></li>
+            <li><a href="gestionar-roles.html"> Roles</a></li>
+            <li><a href="gestionar-patologias.html"> Patologías</a></li>
+            <li><a href="gestionar-menus.html"> Menús</a></li>
+            <li><a href="gestionar-productos.html"> Productos</a></li>
+            <li><a href="gestionar-proveedores.html"> Proveedores</a></li>
+            <li><a href="gestionar-movimientos.html"> Movimientos</a></li>
+            <li><a href="gestionar-inventario.html"> Inventario</a></li>
+        </ul>
+    </aside>
+
+    <div class="main-content">
+        <div class="page-header">
+            <h1>Gestionar Pacientes</h1>
+            <button class="btn btn-primary" onclick="if(typeof limpiarFormularioPaciente === 'function') limpiarFormularioPaciente(); openModal('modalPaciente')">+ Nuevo Paciente</button>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h2>Lista de Pacientes</h2>
+            </div>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Historia Clínica</th>
+                            <th>Nombre Completo</th>
+                            <th>DNI</th>
+                            <th>Patología</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tablaPacientes"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalPaciente" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="tituloModalPaciente">Nuevo Paciente</h2>
+                <button class="modal-close" onclick="closeModal('modalPaciente'); if(typeof limpiarFormularioPaciente === 'function') limpiarFormularioPaciente();">&times;</button>
+            </div>
+            <form id="formPaciente" onsubmit="guardarPaciente(event)">
+                <input type="hidden" id="id_paciente" name="id_paciente">
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="historia_clinica">Historia Clínica</label>
+                        <input type="text" id="historia_clinica" name="historia_clinica" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="persona_paciente">Persona</label>
+                        <input type="text" id="persona_paciente" name="persona_paciente" list="listaPersonasPaciente" autocomplete="off" placeholder="Escribí nombre, apellido o DNI" required>
+                        <input type="hidden" id="persona_paciente_id" name="persona_paciente_id">
+                        <datalist id="listaPersonasPaciente"></datalist>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="patologia_paciente">Patología</label>
+                        <select id="patologia_paciente" name="patologia_paciente">
+                            <option value="">Seleccionar patología</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="estado_ingreso">Estado de Ingreso</label>
+                        <select id="estado_ingreso" name="estado_ingreso" required>
+                            <option value="true">Ingresado</option>
+                            <option value="false">Alta</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-success">Guardar</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('modalPaciente'); if(typeof limpiarFormularioPaciente === 'function') limpiarFormularioPaciente();">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="../utils/utils.js"></script>
+    <script src="pacientes.js"></script>
+</body>
+</html>

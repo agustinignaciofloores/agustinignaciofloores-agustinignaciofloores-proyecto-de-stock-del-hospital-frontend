@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Doctor - Sistema Hospitalario</title>
+    <link rel="stylesheet" href="../../estilo.css">
+</head>
+<body class="doctor-page">
+    <div class="top-bar">
+        <h1> Sistema Hospitalario</h1>
+        <div class="user-info">
+            <span>Bienvenido, Dr. <strong id="doctorName">Doctor</strong></span>
+            <button class="logout-btn" onclick="logout()">Cerrar Sesión</button>
+        </div>
+    </div>
+
+    <aside class="sidebar">
+        <div class="sidebar-logo"> Doctor</div>
+        <ul class="sidebar-menu" id="sidebarMenuDoctor">
+            <li><a href="#" onclick="showSection('dashboard-section', this)" class="active"> Mi Dashboard</a></li>
+            <li><a href="#" onclick="showSection('pacientes', this)"> Mis Pacientes</a></li>
+            <li><a href="#" onclick="showSection('citas', this)"> Mi Agenda</a></li>
+            <li><a href="#" onclick="showSection('historiales', this)"> Historiales</a></li>
+            <li><a href="#" onclick="showSection('recetas', this)"> Recetas</a></li>
+            <li><a href="#" onclick="showSection('diagnosticos', this)"> Diagnósticos</a></li>
+            <li><a href="#" onclick="showSection('ordenes', this)"> Órdenes Médicas</a></li>
+        </ul> 
+    </aside>
+
+    <div class="main-content">
+        <div id="dashboard-section" class="section-content">
+            <h2>Dashboard del Doctor</h2>
+            <div class="dashboard-grid">
+                <div class="stat-card"><h3>Mis Pacientes</h3><div id="stat-pacientes">0</div></div>
+                <div class="stat-card"><h3>Citas Hoy</h3><div id="stat-citas">0</div></div>
+                <div class="stat-card"><h3>Recetas Pendientes</h3><div id="stat-recetas">0</div></div>
+                <div class="stat-card"><h3>Historiales</h3><div id="stat-historiales">0</div></div>
+            </div>
+            <div class="card">
+                <div class="card-header"><h2>Información Profesional</h2></div>
+                <div class="card-body">
+                    <p><strong>Especialidad:</strong> <span id="doctor-especialidad">-</span></p>
+                    <p><strong>Número de Colegio:</strong> <span id="doctor-colegio">-</span></p>
+                    <p><strong>Consultorio:</strong> <span id="doctor-consultorio">-</span></p>
+                    <p><strong>Horario Atención:</strong> <span id="doctor-horario">-</span></p>
+                </div>
+            </div>
+        </div>
+
+        <div id="pacientes" class="section-content" style="display:none;">
+            <div class="card">
+                <div class="card-header"><h2>Mis Pacientes Asignados</h2></div>
+                <div class="card-body">
+                    <div class="search-box">
+                        <input type="text" placeholder="Buscar paciente..." id="buscar-paciente">
+                        <button onclick="buscarPaciente()">Buscar</button>
+                    </div>
+                    <table class="table" id="tablaPacientes">
+                        <thead><tr><th>Nombre</th><th>Documento</th><th>Edad</th><th>Estado</th><th>Acciones</th></tr></thead>
+                        <tbody><tr><td colspan="5" style="text-align:center;">Cargando pacientes...</td></tr></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        </div>
+
+    <script src="../utils/utils.js"></script>
+    <script src="doctor.js"></script>
+    <script>
+        function showSection(sectionId, element) {
+            // Ocultar todo
+            document.querySelectorAll('.section-content').forEach(el => el.style.display = 'none');
+            
+            // Mostrar la seleccionada
+            const target = document.getElementById(sectionId);
+            if (target) target.style.display = 'block';
+
+            // Resaltar menú
+            document.querySelectorAll('.sidebar-menu a').forEach(a => a.classList.remove('active'));
+            if (element) element.classList.add('active');
+        }
+    </script>
+</body>
+</html>

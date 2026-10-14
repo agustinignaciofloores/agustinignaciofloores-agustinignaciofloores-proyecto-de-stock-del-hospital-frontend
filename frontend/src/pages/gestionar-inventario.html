@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestionar Inventario - Sistema Hospitalario</title>
+    <link rel="stylesheet" href="../../estilo.css">
+</head>
+<body class="admin-page">
+    <div class="top-bar">
+        <h1> Sistema Hospitalario</h1>
+        <div class="user-info">
+            <span>Bienvenido, <strong>Administrador</strong></span>
+            <button class="logout-btn" onclick="logout()">Cerrar Sesión</button>
+        </div>
+    </div>
+
+    <aside class="sidebar">
+        <div class="sidebar-logo"> Hospital</div>
+        <ul class="sidebar-menu">
+            <li><a href="dashboard.html"> Dashboard</a></li>
+            <li><a href="gestionar-personas.html"> Personas</a></li>
+            <li><a href="gestionar-pacientes.html"> Pacientes</a></li>
+            <li><a href="gestionar-personal.html"> Personal</a></li>
+            <li><a href="gestionar-roles.html"> Roles</a></li>
+            <li><a href="gestionar-patologias.html"> Patologías</a></li>
+            <li><a href="gestionar-menus.html"> Menús</a></li>
+            <li><a href="gestionar-productos.html"> Productos</a></li>
+            <li><a href="gestionar-proveedores.html"> Proveedores</a></li>
+            <li><a href="gestionar-movimientos.html"> Movimientos</a></li>
+            <li><a href="gestionar-inventario.html" class="active"> Inventario</a></li>
+        </ul>
+    </aside>
+
+    <div class="main-content">
+        <div class="page-header">
+            <h1>Gestionar Inventario</h1>
+            <button class="btn btn-primary" onclick="if(typeof limpiarFormularioInventario === 'function') limpiarFormularioInventario(); openModal('modalInventario')">+ Nuevo Registro</button>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h2>Control de Inventario</h2>
+            </div>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Producto</th>
+                            <th>Categoría</th>
+                            <th>Unidad</th>
+                            <th>Lote</th>
+                            <th>Stock Actual</th>
+                            <th>Fecha Registro</th>
+                            <th>Personal Responsable</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tablaInventario"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h2>⚠️ Alertas de Stock Bajo</h2>
+            </div>
+            <div id="contenedorAlertas" style="padding: 15px;"></div>
+        </div>
+    </div>
+
+    <div id="modalInventario" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="tituloModalInventario">Nuevo Movimiento de Inventario</h2>
+                <button class="modal-close" onclick="closeModal('modalInventario'); if(typeof limpiarFormularioInventario === 'function') limpiarFormularioInventario();">&times;</button>
+            </div>
+            
+            <form id="formInventario" onsubmit="guardarInventario(event)">
+                <input type="hidden" id="id_inventario" name="id_inventario">
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="producto_inventario">Producto</label>
+                        <input type="text" id="producto_inventario" name="producto_inventario" list="listaProductosInventario" required>
+                        <datalist id="listaProductosInventario"></datalist>
+                    </div>
+                    <div class="form-group">
+                        <label for="tipo_movimiento">Acción</label>
+                        <select id="tipo_movimiento" name="tipo_movimiento" required>
+                            <option value="INGRESO">Ingreso (Sumar Stock)</option>
+                            <option value="SALIDA">Salida (Restar Stock)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="stock_inventario">Cantidad</label>
+                        <input type="number" id="stock_inventario" name="stock_inventario" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="precio_inventario">Precio Unitario ($)</label>
+                        <input type="number" id="precio_inventario" name="precio_inventario" min="0" step="0.01" placeholder="Opcional para salidas">
+                    </div>
+                    <div class="form-group">
+                        <label for="unidad_inventario">Unidad</label>
+                        <select id="unidad_inventario" name="unidad_inventario" required>
+                            <option value="kilogramos">Kilogramos</option>
+                            <option value="litros">Litros</option>
+                            <option value="docenas">Docenas</option>
+                            <option value="unidad">Unidad</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="personal_inventario">Responsable</label>
+                        <input type="text" id="personal_inventario" name="personal_inventario" list="listaResponsablesInventario" placeholder="Opcional">
+                        <datalist id="listaResponsablesInventario"></datalist>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="categoria_inventario">Categoría de Lote</label>
+                        <select id="categoria_inventario" name="categoria_inventario" required>
+                            <option value="verduras">Verduras</option>
+                            <option value="frutas">Frutas</option>
+                            <option value="carnes">Carnes</option>
+                            <option value="pollo">Pollo</option>
+                            <option value="aguas">Aguas</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="lote_inventario">Lote</label>
+                        <input type="text" id="lote_inventario" name="lote_inventario" placeholder="Ej: L-2026-07-01">
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-success">Procesar Movimiento</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('modalInventario'); if(typeof limpiarFormularioInventario === 'function') limpiarFormularioInventario();">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="../utils/utils.js"></script>
+    <script src="inventario.js"></script>
+</body>
+</html>

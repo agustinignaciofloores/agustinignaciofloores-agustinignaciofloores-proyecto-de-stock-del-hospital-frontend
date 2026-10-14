@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Administración - Sistema Hospitalario</title>
+    <link rel="stylesheet" href="../../estilo.css">
+</head>
+<body class="admin-page">
+    <div class="top-bar">
+        <h1> Sistema Hospitalario</h1>
+        <div class="user-info">
+            <span>Bienvenido, <strong>Administrador</strong></span>
+            <button class="logout-btn" onclick="logout()">Cerrar Sesión</button>
+        </div>
+    </div>
+
+    <aside class="sidebar">
+        <div class="sidebar-logo"> Hospital</div>
+        <ul class="sidebar-menu">
+            <li><a href="#" onclick="showSectionUsuarios('usuarios')" id="menu-usuarios" class="active"> Usuarios</a></li>
+            <li><a href="#" onclick="showSectionUsuarios('personas')"> Personas</a></li>
+            <li><a href="#" onclick="showSectionUsuarios('personal')"> Personal</a></li>
+            <li><a href="#" onclick="showSectionUsuarios('roles')"> Roles</a></li>
+            <li><a href="#" onclick="showSectionUsuarios('pacientes')"> Pacientes</a></li>
+        </ul>
+    </aside>
+
+    <div class="main-content">
+        <div class="page-header">
+            <h1 id="section-title">Gestionar Usuarios</h1>
+        </div>
+
+        <div id="usuarios" class="section-content">
+            <div style="display: flex; justify-content: flex-end; margin-bottom: 15px;">
+                <button class="btn btn-primary" onclick="abrirModalNuevoUsuario()">+ Nuevo Usuario</button>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <h2>Lista de Usuarios</h2>
+                </div>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Usuario</th>
+                                <th>Personal</th>
+                                <th>Rol</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tablaUsuarios"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="personas" class="section-content" style="display: none;">
+            <div class="card">
+                <div class="card-header"><h2>Lista de Personas</h2></div>
+                <div class="card-body"><p>Contenido de personas en desarrollo...</p></div>
+            </div>
+        </div>
+
+        <div id="personal" class="section-content" style="display: none;">
+            <div class="card">
+                <div class="card-header"><h2>Lista de Personal Médico / Administrativo</h2></div>
+                <div class="card-body"><p>Contenido de personal en desarrollo...</p></div>
+            </div>
+        </div>
+
+        <div id="roles" class="section-content" style="display: none;">
+            <div class="card">
+                <div class="card-header"><h2>Gestión de Roles y Permisos</h2></div>
+                <div class="card-body"><p>Contenido de roles en desarrollo...</p></div>
+            </div>
+        </div>
+
+        <div id="pacientes" class="section-content" style="display: none;">
+            <div class="card">
+                <div class="card-header"><h2>Control de Pacientes Internados</h2></div>
+                <div class="card-body"><p>Contenido de pacientes en desarrollo...</p></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalUsuario" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="tituloModalUsuario">Nuevo Usuario</h2>
+                <button class="modal-close" onclick="cerrarModalUsuario()">&times;</button>
+            </div>
+            <form id="formUsuario" onsubmit="guardarUsuario(event)">
+                <input type="hidden" id="usuario_id" name="usuario_id">
+                <div class="form-group">
+                    <label for="id_persona">Persona</label>
+                    <select id="id_persona" name="id_persona" required>
+                        <option value="">Seleccionar persona</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="username">Usuario</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Contraseña</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <div class="form-group">
+                    <label for="rol_usuario">Rol</label>
+                    <select id="rol_usuario" name="rol_usuario" required>
+                        <option value="">Seleccionar rol</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="estado_usuario">Estado</label>
+                    <select id="estado_usuario" name="estado_usuario" required>
+                        <option value="true">Activo</option>
+                        <option value="false">Inactivo</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-success">Guardar</button>
+                    <button type="button" class="btn btn-secondary" onclick="cerrarModalUsuario()">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="../utils/utils.js"></script>
+    <script src="usuarios.js"></script>
+</body>
+</html>
