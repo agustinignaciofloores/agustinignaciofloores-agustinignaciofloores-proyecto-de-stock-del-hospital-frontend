@@ -29,4 +29,5 @@ module.exports = (sequelize) => sequelize.define('Direccion', {
     },
 }, {
     tableName: 'direcciones',
+    timestamps: false,
 });

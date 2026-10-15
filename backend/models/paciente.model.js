@@ -45,4 +45,5 @@ module.exports = (sequelize) => sequelize.define('Paciente', {
     },
 }, {
     tableName: 'pacientes',
+    timestamps: false,
 });

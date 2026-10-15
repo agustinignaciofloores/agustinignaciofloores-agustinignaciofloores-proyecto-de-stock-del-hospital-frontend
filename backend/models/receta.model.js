@@ -1,2 +1,9 @@
 const { DataTypes } = require('sequelize');
-module.exports = (sequelize) => sequelize.define('Receta', { id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true }, medico_id: { type: DataTypes.INTEGER, allowNull: false }, paciente_id: { type: DataTypes.INTEGER, allowNull: false }, turno_id: DataTypes.INTEGER, fecha_emision: { type: DataTypes.DATEONLY, allowNull: false }, fecha_vencimiento: DataTypes.DATEONLY, estado: DataTypes.STRING(20), observaciones: DataTypes.TEXT, created_at: DataTypes.DATE }, { tableName: 'recetas', timestamps: false });
+module.exports = (sequelize) => sequelize.define('Receta', 
+    { id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true }, 
+    medico_id: { type: DataTypes.INTEGER, allowNull: false }, 
+    paciente_id: { type: DataTypes.INTEGER, allowNull: false }, turno_id: DataTypes.INTEGER, 
+    fecha_emision: { type: DataTypes.DATEONLY, allowNull: false }, 
+    fecha_vencimiento: DataTypes.DATEONLY, estado: DataTypes.STRING(20), 
+    observaciones: DataTypes.TEXT, created_at: DataTypes.DATE }, 
+    { tableName: 'recetas', timestamps: false });

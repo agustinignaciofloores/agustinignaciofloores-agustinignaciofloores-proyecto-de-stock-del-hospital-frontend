@@ -60,6 +60,11 @@ module.exports = (sequelize) => sequelize.define('Persona', {
         type: DataTypes.BOOLEAN,
         allowNull: true,
     },
+    activo: {
+        type: DataTypes.BOOLEAN,
+        allowNull: true,
+    },
 }, {
     tableName: 'personas',
+    timestamps: false,
 });

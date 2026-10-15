@@ -8,19 +8,29 @@ Este proyecto usa una arquitectura simple por capas dentro de Express.
 flowchart LR
     A[Frontend independiente :3000] -->|HTTP /api/*| B[API Express :3001]
     B --> C[Modulo de rutas]
-    C --> D[SQL con pool de PostgreSQL]
-    D --> E[(Base de datos)]
+    C --> D[Modelos Sequelize]
+    D --> E[Conexión Sequelize]
+    E --> F[(Base de datos PostgreSQL)]
     D --> C
     C --> B
     B --> A
 ```
 
-## Modulos separados (refactor)
+## Módulos separados
 
-- auth.routes.js: registro y login.
-- pacientes.routes.js: CRUD de pacientes y busqueda por DNI/nombre.
-- visitas.routes.js: alta/finalizacion de visitas y consultas para "mis visitas".
-- cocina.routes.js: dashboard de cocina, menus y dietas.
+- `auth.router.js`: registro y login.
+- `pacientes.router.js`: CRUD de pacientes y búsqueda por DNI/nombre.
+- `visitas.router.js`: alta/finalización de visitas y consultas para "mis visitas".
+- `cocina.router.js`: dashboard de cocina, menús y dietas.
+- `gestion.router.js`: administración de usuarios, personas y roles.
+- `almacen.router.js`: inventario, productos, proveedores e ingresos.
+- `admin.router.js`: personal, patologías, movimientos, menús y habitaciones.
+- `doctor.router.js`: médicos, turnos y donaciones.
+
+Las rutas acceden a la base mediante los modelos Sequelize definidos en `models/`.
+Los módulos `*-sequelize.router.js` contienen las implementaciones ORM utilizadas
+por las rutas principales; no se ejecutan dos registros de rutas para un mismo
+módulo.
 
 ## Rol de server.js
 
@@ -30,19 +40,19 @@ server.js ahora cumple 3 funciones principales:
 - Express, CORS y JSON.
 - Solo atiende endpoints de la API en el puerto 3001.
 
-2. Helpers compartidos:
-- Deteccion de columnas ID para compatibilidad de esquema.
-- Helpers de compatibilidad y seed minimo.
+2. Inicialización de Sequelize y helpers compartidos:
+- Registro y asociación de modelos.
+- Helpers de compatibilidad de esquema y seed mínimo.
 
-3. Ensamble de modulos:
-- Registra rutas extraidas (auth/pacientes/visitas/cocina).
-- Mantiene otros modulos que aun estan inline.
+3. Ensamble de módulos:
+- Registra los routers de la API una sola vez.
+- Comparte los modelos Sequelize con cada módulo.
 
 ## Como explicarlo en la expo
 
 1. "El frontend llama a /api".
 2. "Express enruta por modulo".
-3. "Cada modulo ejecuta SQL con pool".
+3. "Cada módulo accede a los datos con modelos Sequelize".
 4. "La respuesta vuelve al frontend en JSON".
 5. "server.js centraliza config y conecta modulos".
 

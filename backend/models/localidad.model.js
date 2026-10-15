@@ -1,2 +1,6 @@
 const { DataTypes } = require('sequelize');
-module.exports = (sequelize) => sequelize.define('Localidad', { id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true, field: 'id_localidad' }, id_provincia: DataTypes.INTEGER, nombre_localidad: { type: DataTypes.STRING(100), allowNull: false }, codigo_postal: DataTypes.STRING(10), created_at: DataTypes.DATE }, { tableName: 'localidades', timestamps: false });
+module.exports = (sequelize) => sequelize.define('Localidad', 
+    { id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true, field: 'id_localidad' }, 
+    id_provincia: DataTypes.INTEGER, nombre_localidad: { type: DataTypes.STRING(100), allowNull: false }, 
+    codigo_postal: DataTypes.STRING(10), created_at: DataTypes.DATE }, 
+    { tableName: 'localidades', timestamps: false });
