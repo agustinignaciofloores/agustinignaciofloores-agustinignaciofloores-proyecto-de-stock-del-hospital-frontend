@@ -28,9 +28,9 @@
                     <input type="password" id="contraseña" name="contraseña" placeholder="Tu contraseña" required>
                 </div>
 
-                <button type="submit">Ingresar</button>
+                <button type="submit" id="btnLogin">Ingresar</button>
             </form>
-            <p class="register-link">¿No tienes cuenta? <a href="#" id="btnOpenRegister">Regístrate aquí</a></p>    
+            <p class="register-link">¿No tienes cuenta? <a href="#modalRegister" id="btnOpenRegister">Regístrate aquí</a></p>
         </div>
     </div>
 
@@ -38,7 +38,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h2 id="tituloModalRegister">Registro de Usuario</h2>
-                <button class="modal-close" id="btnCloseRegisterX">&times;</button>
+                <button type="button" class="modal-close" id="btnCloseRegisterX">&times;</button>
             </div>
             <form id="registerForm">
                 <div class="form-group">
@@ -172,6 +172,7 @@
         </div>
     </div>
 
+    <script src="../api/config.js"></script>
     <script src="../utils/utils.js"></script>
 </body>
 </html>

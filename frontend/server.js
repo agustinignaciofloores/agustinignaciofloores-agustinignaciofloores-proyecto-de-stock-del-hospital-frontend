@@ -18,7 +18,13 @@ const mimeTypes = {
 
 const server = http.createServer((request, response) => {
     const requestedPath = decodeURIComponent(request.url.split('?')[0]);
-    const relativePath = requestedPath === '/' ? '/src/pages/index.html' : requestedPath;
+    if (requestedPath === '/') {
+        response.writeHead(302, { Location: '/src/pages/index.html' });
+        response.end();
+        return;
+    }
+
+    const relativePath = requestedPath;
     const filePath = path.resolve(frontendRoot, `.${relativePath}`);
 
     if (!filePath.startsWith(frontendRoot) || !fs.existsSync(filePath) || fs.statSync(filePath).isDirectory()) {

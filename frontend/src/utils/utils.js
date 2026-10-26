@@ -1,27 +1,23 @@
 // utils.js - Funciones comunes para manejo de modales, alertas, sesión y navegación
 
-const DEFAULT_BACKEND_ORIGIN = 'http://localhost:3001';
+const DEFAULT_BACKEND_ORIGIN = 'https://proyecto-de-stock-del-hospital-backend.onrender.com';
+const LOCAL_BACKEND_ORIGIN = 'http://localhost:3000';
 
 // FUNCIONES DE URL Y BACKEND
 
 function getBackendOrigin() {
-    const configuredOrigin = (window.localStorage && localStorage.getItem('backendOrigin')) || window.BACKEND_ORIGIN;
+    const storedOrigin = window.localStorage && localStorage.getItem('backendOrigin');
+    const configuredOrigin = window.BACKEND_ORIGIN || storedOrigin;
     if (configuredOrigin) {
         return String(configuredOrigin).replace(/\/+$/, '');
     }
 
-    if (window.location.protocol === 'file:') {
-        return DEFAULT_BACKEND_ORIGIN;
-    }
-
-    // En desarrollo local el frontend puede correr en otro puerto.
-    // En ese caso forzamos el backend real para evitar errores de login/API.
     const isLocalHost = ['localhost', '127.0.0.1'].includes(window.location.hostname);
-    if (isLocalHost && window.location.port && window.location.port !== '3001') {
-        return DEFAULT_BACKEND_ORIGIN;
+    if (window.location.protocol === 'file:' || isLocalHost) {
+        return LOCAL_BACKEND_ORIGIN;
     }
 
-    return window.location.origin || DEFAULT_BACKEND_ORIGIN;
+    return DEFAULT_BACKEND_ORIGIN;
 }
 
 // Construye la URL completa para la API del backend, asegurando que siempre comience con /api
@@ -107,7 +103,13 @@ function showSection(sectionId) {
 document.addEventListener("DOMContentLoaded", () => {
 
     // --- MANEJO DE SESIÓN VISUAL (Escudado contra nulos y multi-rol) ---
-    const loggedUser = JSON.parse(localStorage.getItem("usuarioLogueado"));
+    let loggedUser = null;
+    try {
+        loggedUser = JSON.parse(localStorage.getItem("usuarioLogueado") || 'null');
+    } catch (error) {
+        console.error("No se pudieron leer los datos de la sesión:", error);
+        localStorage.removeItem("usuarioLogueado");
+    }
     const userNameLabel = document.getElementById("doctorName") || document.getElementById("userName");
     if (userNameLabel && loggedUser) {
         userNameLabel.textContent = loggedUser.usuario || loggedUser.nombre || "Usuario";
@@ -136,7 +138,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const btnCloseRegisterX = document.getElementById('btnCloseRegisterX');
     const btnCancelRegister = document.getElementById('btnCancelRegister');
 
-    if (btnOpenRegister) btnOpenRegister.addEventListener('click', (e) => { e.preventDefault(); openModal('modalRegister'); });
+    if (btnOpenRegister) {
+        btnOpenRegister.addEventListener('click', (event) => {
+            event.preventDefault();
+            openModal('modalRegister');
+        });
+    }
     if (btnCloseRegisterX) btnCloseRegisterX.addEventListener('click', () => closeModal('modalRegister'));
     if (btnCancelRegister) btnCancelRegister.addEventListener('click', () => closeModal('modalRegister'));
 
@@ -225,7 +232,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // === 2. LÓGICA DE LOGIN ===
-    const loginForm = document.getElementById("loginForm"); 
+    const loginForm = document.getElementById("loginForm");
     if (loginForm) {
         loginForm.addEventListener("submit", async function(event) {
             event.preventDefault();
@@ -245,6 +252,9 @@ document.addEventListener("DOMContentLoaded", () => {
                     body: JSON.stringify({ usuario, contraseña: contrasenia })
                 });
 
+                if (!response.ok) {
+                    throw new Error(`Error HTTP ${response.status}`);
+                }
                 const result = await response.json();
                 // Manejo de la respuesta del backend
                 if (result.success) {

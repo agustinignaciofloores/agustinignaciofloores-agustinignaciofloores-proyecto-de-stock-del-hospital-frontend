@@ -89,7 +89,7 @@ async function inicializarCocina() {
         console.error(error);
         const isNetworkError = String(error?.message || '').toLowerCase().includes('failed to fetch');
         if (isNetworkError) {
-            const backendUrl = window.getBackendOrigin ? window.getBackendOrigin() : 'http://localhost:3001';
+            const backendUrl = window.getBackendOrigin ? window.getBackendOrigin() : 'BACKEND_ORIGIN no configurado';
             notify('danger', `No hay conexión con el backend (${backendUrl}). Iniciá el servidor con: node backend/server.js`);
             renderEmptyRow('tablaMenus', 5, 'Sin conexión al backend');
             renderEmptyRow('tablaDietas', 7, 'Sin conexión al backend');
