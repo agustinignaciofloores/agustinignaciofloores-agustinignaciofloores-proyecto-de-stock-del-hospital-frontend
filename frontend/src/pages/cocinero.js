@@ -1,6 +1,7 @@
 // Gestión de Cocina - Dashboard funcional
 const API_URL = window.buildApiUrl('/api/cocina');
 const INVENTARIO_API_URL = window.buildApiUrl('/api/inventario');
+const MENUS_API_URL = window.buildApiUrl('/api/menus');
 
 let menusData = [];
 let dietasData = [];
@@ -68,38 +69,62 @@ async function fetchJson(url, fallbackError) {
 
 async function inicializarCocina() {
     try {
-        const [resumen, menus, dietas, inventario] = await Promise.all([
+        const resultados = await Promise.allSettled([
             fetchJson(`${API_URL}/resumen`, 'No se pudo cargar el resumen de cocina'),
             fetchJson(`${API_URL}/menus`, 'No se pudieron cargar los menús'),
             fetchJson(`${API_URL}/dietas`, 'No se pudieron cargar las dietas especiales'),
             fetchJson(INVENTARIO_API_URL, 'No se pudo cargar el inventario')
         ]);
+        const errores = [];
+        const [resumen, menus, dietas, inventario] = resultados;
 
-        menusData = Array.isArray(menus) ? menus : [];
-        dietasData = Array.isArray(dietas) ? dietas : [];
-        inventarioData = Array.isArray(inventario) ? inventario : [];
-
-        renderResumen(resumen || {});
-        renderMenus();
-        renderDietas(dietasData);
-        renderInventario();
-        renderPreparacion();
-        renderEntregas();
-    } catch (error) {
-        console.error(error);
-        const isNetworkError = String(error?.message || '').toLowerCase().includes('failed to fetch');
-        if (isNetworkError) {
-            const backendUrl = window.getBackendOrigin ? window.getBackendOrigin() : 'BACKEND_ORIGIN no configurado';
-            notify('danger', `No hay conexión con el backend (${backendUrl}). Iniciá el servidor con: node backend/server.js`);
-            renderEmptyRow('tablaMenus', 5, 'Sin conexión al backend');
-            renderEmptyRow('tablaDietas', 7, 'Sin conexión al backend');
-            renderEmptyRow('tablaInventario', 4, 'Sin conexión al backend');
-            renderEmptyRow('tablaEntregas', 5, 'Sin conexión al backend');
-            const preparacion = document.getElementById('gridPreparacion');
-            if (preparacion) preparacion.innerHTML = '<p style="opacity:0.75;">Sin conexión al backend.</p>';
-            return;
+        if (resumen.status === 'fulfilled') {
+            renderResumen(resumen.value || {});
+        } else {
+            errores.push(resumen.reason);
         }
 
+        if (menus.status === 'fulfilled' && Array.isArray(menus.value)) {
+            menusData = menus.value;
+            renderMenus();
+        } else {
+            menusData = [];
+            renderEmptyRow('tablaMenus', 5, 'No se pudieron cargar los menús');
+            errores.push(menus.status === 'rejected' ? menus.reason : new Error('La respuesta de menús no es válida'));
+        }
+
+        if (dietas.status === 'fulfilled' && Array.isArray(dietas.value)) {
+            dietasData = dietas.value;
+            renderDietas(dietasData);
+        } else {
+            dietasData = [];
+            renderEmptyRow('tablaDietas', 7, 'No se pudieron cargar las dietas especiales');
+            errores.push(dietas.status === 'rejected' ? dietas.reason : new Error('La respuesta de dietas no es válida'));
+        }
+
+        if (inventario.status === 'fulfilled' && Array.isArray(inventario.value)) {
+            inventarioData = inventario.value;
+            renderInventario();
+        } else {
+            inventarioData = [];
+            renderEmptyRow('tablaInventario', 4, 'No se pudo cargar el inventario');
+            errores.push(inventario.status === 'rejected' ? inventario.reason : new Error('La respuesta del inventario no es válida'));
+        }
+
+        renderPreparacion();
+        renderEntregas();
+        if (errores.length) {
+            errores.forEach((error) => console.error(error));
+            const isNetworkError = errores.some((error) => String(error?.message || '').toLowerCase().includes('failed to fetch'));
+            if (isNetworkError) {
+                const backendUrl = window.getBackendOrigin ? window.getBackendOrigin() : 'BACKEND_ORIGIN no configurado';
+                notify('danger', `No hay conexión con el backend (${backendUrl}). Iniciá el servidor con: node backend/server.js`);
+            } else {
+                notify('danger', errores.map((error) => error.message || 'Error al cargar los datos de cocina').join('\n'));
+            }
+        }
+    } catch (error) {
+        console.error(error);
         notify('danger', error.message || 'Error al cargar panel de cocina');
     }
 }
@@ -280,9 +305,39 @@ function buscarDieta() {
 }
 
 function nuevoMenu() {
-    const crearAhora = confirm('La gestión de menús se realiza en el módulo de Menús. ¿Querés abrirlo ahora?');
-    if (crearAhora) {
-        window.location.href = 'gestionar-menus.html';
+    openModal('modalNuevoMenuCocina');
+}
+
+async function guardarMenuCocina(event) {
+    event.preventDefault();
+
+    const data = {
+        nombre: document.getElementById('nombreMenuCocina').value.trim(),
+        descripcion: document.getElementById('descripcionMenuCocina').value.trim(),
+        restriccion: document.getElementById('restriccionMenuCocina').value.trim() || null,
+    };
+
+    if (!data.nombre) {
+        notify('danger', 'El nombre del menú es obligatorio.');
+        return;
+    }
+
+    try {
+        const response = await fetch(MENUS_API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+        });
+        if (!response.ok) {
+            throw new Error(await parseApiError(response, 'No se pudo guardar el menú'));
+        }
+
+        closeModal('modalNuevoMenuCocina');
+        notify('success', 'Menú guardado correctamente');
+        await inicializarCocina();
+    } catch (error) {
+        console.error(error);
+        notify('danger', error.message || 'No se pudo guardar el menú');
     }
 }
 

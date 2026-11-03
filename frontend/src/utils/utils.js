@@ -11,7 +11,7 @@ function getBackendOrigin() {
     if (configuredOrigin) {
         return String(configuredOrigin).replace(/\/+$/, '');
     }
-
+// Detecta si la aplicación se está ejecutando en localhost o desde un archivo local y devuelve la URL del backend correspondiente.
     const isLocalHost = ['localhost', '127.0.0.1'].includes(window.location.hostname);
     if (window.location.protocol === 'file:' || isLocalHost) {
         return LOCAL_BACKEND_ORIGIN;

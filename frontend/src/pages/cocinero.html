@@ -59,6 +59,33 @@
         <div id="entregas" class="section-content" style="display: none;"><div class="card"><div class="card-header"><h2>Entregas</h2></div><div class="card-body"><table class="table"><thead><tr><th>Paciente</th><th>Dieta</th><th>Habitación</th><th>Estado</th><th>Última Actualización</th></tr></thead><tbody id="tablaEntregas"></tbody></table></div></div></div>
     </div>
 
+    <div id="modalNuevoMenuCocina" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Nuevo Menú</h2>
+                <button class="modal-close" type="button" onclick="closeModal('modalNuevoMenuCocina')">&times;</button>
+            </div>
+            <form onsubmit="guardarMenuCocina(event)">
+                <div class="form-group">
+                    <label for="nombreMenuCocina">Nombre del Menú</label>
+                    <input type="text" id="nombreMenuCocina" required>
+                </div>
+                <div class="form-group">
+                    <label for="descripcionMenuCocina">Descripción</label>
+                    <textarea id="descripcionMenuCocina" rows="4"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="restriccionMenuCocina">Restricción / Dieta especial</label>
+                    <input type="text" id="restriccionMenuCocina" placeholder="Ej: Diabético, Sin gluten, Ninguna">
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-success">Guardar</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('modalNuevoMenuCocina')">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script src="../api/config.js"></script>
     <script src="../utils/utils.js"></script>
     <script src="cocinero.js"></script>
