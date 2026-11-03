@@ -14,9 +14,11 @@ async function cargarCatalogosMovimiento() {
     const proveedorSelect = document.getElementById('proveedor_inventario');
     if (personalSelect) {
         personalSelect.innerHTML = '<option value="">Seleccionar personal</option>';
-        personal.filter(item => item.activo !== false).forEach(item => {
-            personalSelect.innerHTML += `<option value="${item.id}">${item.nombre_completo || `${item.nombre || ''} ${item.apellido || ''}`.trim()}</option>`;
-        });
+        personal
+            .filter(item => item.activo !== false && ['almacenero', 'cocinero'].includes(String(item.rol_nombre || '').trim().toLowerCase()))
+            .forEach(item => {
+                personalSelect.innerHTML += `<option value="${item.id}">${item.nombre_completo || `${item.nombre || ''} ${item.apellido || ''}`.trim()}</option>`;
+            });
     }
     if (proveedorSelect) {
         proveedorSelect.innerHTML = '<option value="">Seleccionar proveedor</option>';
