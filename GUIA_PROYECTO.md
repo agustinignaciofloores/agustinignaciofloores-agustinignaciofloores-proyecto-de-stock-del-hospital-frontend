@@ -446,17 +446,18 @@ las tenga:
 
 ### Prioridad alta: seguridad y datos
 
-1. Reemplazar el token fijo de demostración por JWT real con expiración y clave
-   segura; agregar middleware que autentique y autorice cada endpoint según rol.
-   Hoy el frontend adjunta un token, pero no se observa verificación/autorización
-   común en las rutas.
-2. Al registrar y validar usuarios se usa la contraseña directamente, sin hash
-   visible en la implementación. Usar `bcrypt`/`argon2`, migrar credenciales
-   existentes con cuidado y no devolver datos sensibles.
-3. Proteger los endpoints y limitar CORS al dominio de Vercel, no dejar una
-   política abierta para cualquier origen en producción.
-4. Añadir validación de datos de servidor, límites de longitud/cantidad,
-   manejo uniforme de errores y logs que no expongan información personal.
+1. El backend verifica JWT HS256 con expiración de una hora y aplica autorización
+  por rol en `/api`. El frontend guarda el token tras login, lo envía como
+  bearer y lo elimina al cerrar sesión. El alta pública crea solo pacientes.
+  Render genera `JWT_SECRET` desde su manifiesto; en local se define en
+  `backend/.env`.
+2. Al registrar y validar usuarios todavía se usa la contraseña directamente,
+  sin hash. Usar `bcrypt`/`argon2` y migrar credenciales existentes con cuidado
+  es una tarea pendiente; no usar contraseñas reales en esta versión.
+3. Limitar CORS al dominio de Vercel, no dejar una política abierta para
+  cualquier origen en producción.
+4. Completar validación de datos en servidor y límites de longitud/cantidad;
+  la API ya normaliza los cuerpos de error y oculta el detalle de fallos 500.
 5. Asegurar la consistencia del inventario: impedir borrar productos con
    movimientos relacionados o usar baja lógica; asegurar que cualquier cambio
    de stock quede auditado; registrar quién realiza cada operación.
@@ -516,8 +517,8 @@ las tenga:
 > actualiza el stock dentro de una transacción y guarda un movimiento para
 > mantener historial. También hay módulos de usuarios, personas, pacientes,
 > cocina, visitas, turnos y administración. Como próximos pasos, priorizaría
-> autenticación real con control por roles, hash de contraseñas, completar rutas
-> de historia clínica/recetas y unificar la configuración de despliegue.”
+> el hash de contraseñas, completar rutas de historia clínica/recetas y validar
+> los flujos de escritura en un entorno de pruebas.”
 
 ### Preguntas que podrían hacerte
 
@@ -534,7 +535,6 @@ las tenga:
 - **¿Qué diferencia hay entre producto y movimiento?** Producto representa el
   artículo y su saldo actual; movimiento explica una entrada, salida o ajuste
   que modifica ese saldo.
-- **¿Qué falta para producción real?** Autenticación y permisos reales,
-  contraseñas hasheadas, validaciones completas, pruebas, control de acceso a
-  datos clínicos, recuperación de errores y políticas operativas de respaldo y
-  auditoría.
+- **¿Qué falta para producción real?** Hash de contraseñas, revocación de
+  sesiones, validaciones completas, pruebas de integración, CORS restrictivo,
+  mayor segregación de datos clínicos y políticas operativas de respaldo y auditoría.

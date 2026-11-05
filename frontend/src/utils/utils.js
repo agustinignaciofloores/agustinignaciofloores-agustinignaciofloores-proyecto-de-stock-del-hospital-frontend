@@ -40,6 +40,19 @@ window.getBackendOrigin = getBackendOrigin;
 // Exportamos la función buildApiUrl para que pueda ser usada en otros scripts del frontend
 window.buildApiUrl = buildApiUrl;
 
+const fetchWithoutAuth = window.fetch.bind(window);
+window.fetch = (input, init = {}) => {
+    const requestUrl = new URL(input instanceof Request ? input.url : input, window.location.href);
+    const backendOrigin = new URL(getBackendOrigin()).origin;
+    if (requestUrl.origin !== backendOrigin) return fetchWithoutAuth(input, init);
+
+    const headers = new Headers(input instanceof Request ? input.headers : undefined);
+    new Headers(init.headers || {}).forEach((value, key) => headers.set(key, value));
+    const token = localStorage.getItem('token');
+    if (token) headers.set('Authorization', `Bearer ${token}`);
+    return fetchWithoutAuth(input, { ...init, headers });
+};
+
 //  FUNCIONES DE MODALES Y ALERTAS
 
 function openModal(modalId) {
@@ -72,6 +85,7 @@ function showAlert(type, message) {
 //  FUNCIONES DE SESIÓN
 function logout() {
     if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
+        localStorage.removeItem('token');
         localStorage.removeItem('usuarioLogueado');
         window.location.href = 'index.html';
     }
@@ -259,6 +273,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 // Manejo de la respuesta del backend
                 if (result.success) {
                     showAlert("success", "¡Inicio de sesión correcto! Redirigiendo...");
+                    localStorage.setItem("token", result.token);
                     localStorage.setItem("usuarioLogueado", JSON.stringify(result.usuario));
 
                     setTimeout(() => {

@@ -16,15 +16,15 @@ presentó al profesor y ajustar el alcance si difiere.
 | INV-04 | Registrar salida con cantidad positiva, responsable y stock suficiente. | `POST /api/inventario/movimiento`. | Tests unitarios simulados presentes; probar en DB. |
 | INV-05 | Actualizar stock y guardar el movimiento en una transacción. | Transacción Sequelize y bloqueo de fila en la ruta de movimiento. | Tests unitarios simulados presentes; verificar rollback/aislamiento en PostgreSQL. |
 | INV-06 | Consultar historial y resumen del almacén. | `GET /api/almacen/movimientos` y `GET /api/reportes/almacen`. | Código presente; falta prueba de extremo a extremo. |
-| INV-07 | Mostrar formulario, errores y resultados en escritorio y móvil. | HTML y CSS responsive en `frontend/src/estilo.css`. | Falta validación visual documentada en los viewports objetivo. |
+| INV-07 | Mostrar formulario, errores y resultados en escritorio y móvil. | HTML y CSS responsive en `frontend/src/estilo.css`. | Acceso, almacén, tabla y modal revisados localmente a 390 px; falta guardar capturas y probar en Vercel. |
 
 ### Requisitos transversales
 
 - REQ-01: no permitir operaciones inválidas ni stock negativo; validar en backend aunque exista validación HTML.
-- REQ-02: informar éxito o error sin exponer stack traces ni datos sensibles.
+- REQ-02: informar errores con forma JSON uniforme y no exponer detalles internos en respuestas 500. Implementado en middleware API; completar validación de todos los campos de negocio.
 - REQ-03: persistir en PostgreSQL y conservar el movimiento que justifica cada cambio de stock.
 - REQ-04: documentar instalación, variables de entorno, prueba, despliegue y usuario/datos de demostración no sensibles.
-- REQ-05: autenticación y permisos reales. Está pendiente: las contraseñas y el token actuales son de demostración. El hash se posterga expresamente para una tarea posterior, pero no se debe presentar como seguridad terminada.
+- REQ-05: login con JWT HS256 verificable, expiración de una hora, autorización por rol y restricciones de propiedad para turnos, ficha y visitas. Implementado; el secreto se define en `JWT_SECRET` (Render lo genera desde `render.yaml`). Las contraseñas siguen en texto plano por decisión explícita de postergar el hash; no usar credenciales reales.
 
 ## Criterios para cerrar la demo
 

@@ -8,8 +8,8 @@ y evidencia reales antes de la defensa.
 
 | Pendiente | En curso | Hecho en este workspace |
 |---|---|---|
-| Ejecutar `database_schema.sql` en una base PostgreSQL vacía de pruebas. | Verificar configuración final de Render con el repositorio backend. | Validaciones de tipo, cantidad y stock de movimiento de inventario cubiertas por tests simulados. |
-| Ejecutar smoke test en las URLs publicadas y adjuntar capturas. | Obtener capturas de las pantallas principales en móvil. | Prueba de inventario y chequeos estáticos del esquema agregados. |
+| Ejecutar `database_schema.sql` en una base PostgreSQL vacía de pruebas. | Verificar configuración final de Render con el repositorio backend. | Tests simulados de inventario, JWT, autorización por rol y normalización de errores. |
+| Ejecutar smoke test de escritura en las URLs publicadas y adjuntar capturas. | Obtener y guardar capturas de las pantallas principales en móvil. | Acceso, almacén, tabla y modal revisados localmente a 390 px; `/health` y GET inventario públicos comprobados. |
 | Completar la tabla de contribuciones con PR/commit verificable de cada integrante. | Cotejar el MVP con el documento aprobado por la cátedra. | README, DER y requisitos propuestos agregados. |
 
 ## Evidencia externa a completar
