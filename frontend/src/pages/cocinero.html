@@ -52,9 +52,35 @@
         
         <div id="pacientes" class="section-content" style="display: none;"><div class="card"><div class="card-header"><h2>Dietas Especiales</h2></div><div class="card-body"><div class="search-box"><input id="buscar-dieta" type="text" placeholder="Buscar por paciente, habitación o dieta..."></div><table class="table"><thead><tr><th>Paciente</th><th>Habitación</th><th>Tipo de Dieta</th><th>Restricciones</th><th>Médico</th><th>Estado</th><th>Acción</th></tr></thead><tbody id="tablaDietas"></tbody></table></div></div></div>
 
-        <div id="inventario" class="section-content" style="display: none;"><div class="card"><div class="card-header"><h2>Inventario de Cocina</h2></div><div class="card-body"><table class="table"><thead><tr><th>Producto</th><th>Stock</th><th>Último Movimiento</th><th>Responsable</th></tr></thead><tbody id="tablaInventario"></tbody></table></div></div></div>
+        <div id="inventario" class="section-content" style="display: none;">
+            <div class="card">
+                <div class="card-header"><h2>Inventario de Cocina</h2></div>
+                <div class="card-body">
+                    <p>Existencias propias de cocina. El stock se actualiza al confirmar un surtido.</p>
+                    <table class="table"><thead><tr><th>Producto</th><th>Stock cocina</th><th>Stock almacén</th></tr></thead><tbody id="tablaInventario"></tbody></table>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header"><h2>Solicitar reposición</h2></div>
+                <div class="card-body">
+                    <form id="formRequisicionCocina" onsubmit="crearRequisicionCocina(event)">
+                        <div class="form-grid">
+                            <div class="form-group"><label for="productoRequisicion">Producto</label><select id="productoRequisicion" required><option value="">Cargando productos…</option></select></div>
+                            <div class="form-group"><label for="cantidadRequisicion">Cantidad requerida</label><input id="cantidadRequisicion" type="number" min="1" step="1" required></div>
+                            <div class="form-group"><label for="motivoRequisicion">Motivo (opcional)</label><input id="motivoRequisicion" type="text" maxlength="500"></div>
+                        </div>
+                        <button class="btn btn-success" type="submit">Enviar solicitud</button>
+                    </form>
+                    <h3>Mis solicitudes</h3>
+                    <table class="table"><thead><tr><th>Fecha</th><th>Producto</th><th>Cantidad</th><th>Estado</th><th>Motivo</th></tr></thead><tbody id="tablaRequisicionesCocina"></tbody></table>
+                </div>
+            </div>
+        </div>
 
-        <div id="preparacion" class="section-content" style="display: none;"><div class="card"><div class="card-header"><h2>En Preparación</h2></div><div class="card-body"><div id="gridPreparacion"></div></div></div></div>
+        <div id="preparacion" class="section-content" style="display: none;">
+            <div class="card"><div class="card-header"><h2>En Preparación</h2></div><div class="card-body"><div id="gridPreparacion"></div></div></div>
+            <div class="card"><div class="card-header"><h2>Planilla de menús asignados a pacientes</h2></div><div class="card-body"><table class="table"><thead><tr><th>Paciente</th><th>Menú</th><th>Recetas e ingredientes</th><th>Adaptaciones y observaciones</th></tr></thead><tbody id="tablaPlanCocina"></tbody></table></div></div>
+        </div>
 
         <div id="entregas" class="section-content" style="display: none;"><div class="card"><div class="card-header"><h2>Entregas</h2></div><div class="card-body"><table class="table"><thead><tr><th>Paciente</th><th>Dieta</th><th>Habitación</th><th>Estado</th><th>Última Actualización</th></tr></thead><tbody id="tablaEntregas"></tbody></table></div></div></div>
     </div>

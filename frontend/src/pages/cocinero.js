@@ -1,14 +1,20 @@
 // Gestión de Cocina - Dashboard funcional
 const API_URL = window.buildApiUrl('/api/cocina');
-const INVENTARIO_API_URL = window.buildApiUrl('/api/inventario');
+const STOCK_COCINA_API_URL = window.buildApiUrl('/api/requisiciones/stock-cocina');
+const REQUISICIONES_API_URL = window.buildApiUrl('/api/requisiciones');
 const MENUS_API_URL = window.buildApiUrl('/api/menus');
 
 let menusData = [];
 let dietasData = [];
 let inventarioData = [];
+let requisicionesData = [];
+let planificacionesData = [];
 
 document.addEventListener('DOMContentLoaded', () => {
     inicializarCocina();
+    window.setInterval(() => {
+        actualizarStockYRequisiciones().catch((error) => console.error(error));
+    }, 15000);
 
     const inputBusqueda = document.getElementById('buscar-dieta');
     if (inputBusqueda) {
@@ -73,10 +79,12 @@ async function inicializarCocina() {
             fetchJson(`${API_URL}/resumen`, 'No se pudo cargar el resumen de cocina'),
             fetchJson(`${API_URL}/menus`, 'No se pudieron cargar los menús'),
             fetchJson(`${API_URL}/dietas`, 'No se pudieron cargar las dietas especiales'),
-            fetchJson(INVENTARIO_API_URL, 'No se pudo cargar el inventario')
+            fetchJson(`${API_URL}/planificacion`, 'No se pudo cargar la planilla de cocina'),
+            fetchJson(STOCK_COCINA_API_URL, 'No se pudo cargar el inventario de cocina'),
+            fetchJson(REQUISICIONES_API_URL, 'No se pudieron cargar las solicitudes')
         ]);
         const errores = [];
-        const [resumen, menus, dietas, inventario] = resultados;
+        const [resumen, menus, dietas, planificaciones, inventario, requisiciones] = resultados;
 
         if (resumen.status === 'fulfilled') {
             renderResumen(resumen.value || {});
@@ -102,13 +110,32 @@ async function inicializarCocina() {
             errores.push(dietas.status === 'rejected' ? dietas.reason : new Error('La respuesta de dietas no es válida'));
         }
 
+        if (planificaciones.status === 'fulfilled' && Array.isArray(planificaciones.value)) {
+            planificacionesData = planificaciones.value;
+            renderPlanCocina();
+        } else {
+            planificacionesData = [];
+            renderEmptyRow('tablaPlanCocina', 4, 'No se pudo cargar la planilla de cocina');
+            errores.push(planificaciones.status === 'rejected' ? planificaciones.reason : new Error('La respuesta de planificación no es válida'));
+        }
+
         if (inventario.status === 'fulfilled' && Array.isArray(inventario.value)) {
             inventarioData = inventario.value;
             renderInventario();
+            renderProductosRequisicion();
         } else {
             inventarioData = [];
-            renderEmptyRow('tablaInventario', 4, 'No se pudo cargar el inventario');
+            renderEmptyRow('tablaInventario', 3, 'No se pudo cargar el inventario');
             errores.push(inventario.status === 'rejected' ? inventario.reason : new Error('La respuesta del inventario no es válida'));
+        }
+
+        if (requisiciones.status === 'fulfilled' && Array.isArray(requisiciones.value)) {
+            requisicionesData = requisiciones.value;
+            renderRequisicionesCocina();
+        } else {
+            requisicionesData = [];
+            renderEmptyRow('tablaRequisicionesCocina', 5, 'No se pudieron cargar las solicitudes');
+            errores.push(requisiciones.status === 'rejected' ? requisiciones.reason : new Error('La respuesta de solicitudes no es válida'));
         }
 
         renderPreparacion();
@@ -210,7 +237,7 @@ function renderInventario() {
     if (!tbody) return;
 
     if (!inventarioData.length) {
-        renderEmptyRow('tablaInventario', 4, 'No hay productos en inventario');
+        renderEmptyRow('tablaInventario', 3, 'No hay productos en inventario');
         return;
     }
 
@@ -218,14 +245,101 @@ function renderInventario() {
         .map((item) => {
             return `
                 <tr>
-                    <td>${safeValue(item.producto)}</td>
-                    <td>${safeValue(item.stock, 0)}</td>
-                    <td>${formatDateTime(item.fecha)}</td>
-                    <td>${safeValue(item.personal, 'Sin asignar')}</td>
+                    <td>${escapeHtml(item.nombre)}${item.id ? ` (#${item.id})` : ''}</td>
+                    <td>${escapeHtml(item.stock_cocina ?? 0)} ${escapeHtml(item.unidad_medida || '')}</td>
+                    <td>${escapeHtml(item.stock_almacen ?? 0)} ${escapeHtml(item.unidad_medida || '')}</td>
                 </tr>
             `;
         })
         .join('');
+}
+
+function renderProductosRequisicion() {
+    const select = document.getElementById('productoRequisicion');
+    if (!select) return;
+    select.replaceChildren(new Option('Seleccionar producto', ''));
+    inventarioData.forEach((item) => {
+        const nombre = `${item.nombre} (#${item.id}) — disponible en almacén: ${item.stock_almacen}`;
+        select.add(new Option(nombre, item.id));
+    });
+    if (!inventarioData.length) select.replaceChildren(new Option('No hay productos disponibles', ''));
+}
+
+function renderRequisicionesCocina() {
+    const tbody = document.getElementById('tablaRequisicionesCocina');
+    if (!tbody) return;
+    if (!requisicionesData.length) {
+        renderEmptyRow('tablaRequisicionesCocina', 5, 'Todavía no hay solicitudes');
+        return;
+    }
+    tbody.innerHTML = requisicionesData.map((item) => `
+        <tr>
+            <td>${escapeHtml(formatDateTime(item.created_at))}</td>
+            <td>${escapeHtml(item.producto?.nombre || 'Producto')}</td>
+            <td>${escapeHtml(item.cantidad)}</td>
+            <td>${escapeHtml(item.estado)}</td>
+            <td>${escapeHtml(item.motivo || '-')}</td>
+        </tr>
+    `).join('');
+}
+
+function renderPlanCocina() {
+    const tbody = document.getElementById('tablaPlanCocina');
+    if (!tbody) return;
+    if (!planificacionesData.length) {
+        renderEmptyRow('tablaPlanCocina', 4, 'No hay menús asignados para hoy');
+        return;
+    }
+    tbody.innerHTML = planificacionesData.map((plan) => {
+        const menu = plan.menu || {};
+        const recipes = (menu.recetasAsignadas || []).map((assignment) => {
+            const recipe = assignment.receta || {};
+            const ingredients = (recipe.detalles || []).map((detail) =>
+                `${detail.producto?.nombre || 'Ingrediente'}: ${detail.cantidad} ${detail.unidad_medida}`).join(', ');
+            return `${escapeHtml(recipe.nombre || 'Receta')} (${escapeHtml(assignment.porciones)} porciones)${ingredients ? ` — ${escapeHtml(ingredients)}` : ''}`;
+        }).join('<br>');
+        return `<tr>
+            <td>${escapeHtml(plan.paciente?.documento || `Paciente ${plan.paciente_id}`)}</td>
+            <td>${escapeHtml(menu.turno || '-')} — ${escapeHtml(menu.plato_principal || '-')}</td>
+            <td>${recipes || 'Sin recetas asignadas'}</td>
+            <td>${escapeHtml([plan.condicion_clinica, plan.observaciones].filter(Boolean).join(' — ') || '-')}</td>
+        </tr>`;
+    }).join('');
+}
+
+async function actualizarStockYRequisiciones() {
+    const [stock, requisiciones, planificaciones] = await Promise.all([
+        fetchJson(STOCK_COCINA_API_URL, 'No se pudo actualizar el inventario'),
+        fetchJson(REQUISICIONES_API_URL, 'No se pudieron actualizar las solicitudes'),
+        fetchJson(`${API_URL}/planificacion`, 'No se pudo actualizar la planilla de cocina'),
+    ]);
+    inventarioData = stock;
+    requisicionesData = requisiciones;
+    planificacionesData = planificaciones;
+    renderInventario();
+    renderProductosRequisicion();
+    renderRequisicionesCocina();
+    renderPlanCocina();
+}
+
+async function crearRequisicionCocina(event) {
+    event.preventDefault();
+    const productoId = Number(document.getElementById('productoRequisicion').value);
+    const cantidad = Number(document.getElementById('cantidadRequisicion').value);
+    const motivo = document.getElementById('motivoRequisicion').value.trim();
+    try {
+        const response = await fetch(REQUISICIONES_API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ producto_id: productoId, cantidad, motivo }),
+        });
+        if (!response.ok) throw new Error(await parseApiError(response, 'No se pudo enviar la solicitud'));
+        document.getElementById('formRequisicionCocina').reset();
+        notify('success', 'Solicitud enviada al almacén');
+        await actualizarStockYRequisiciones();
+    } catch (error) {
+        notify('danger', error.message || 'No se pudo enviar la solicitud');
+    }
 }
 
 function renderPreparacion() {
@@ -286,6 +400,12 @@ function renderEntregas() {
             `;
         })
         .join('');
+}
+
+function escapeHtml(value) {
+    return String(value ?? '').replace(/[&<>"']/g, (character) => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
+    })[character]);
 }
 
 function buscarDieta() {

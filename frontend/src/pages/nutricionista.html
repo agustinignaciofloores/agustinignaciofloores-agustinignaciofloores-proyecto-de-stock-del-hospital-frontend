@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Módulo de Nutrición - Sistema Hospitalario</title>
+    <link rel="stylesheet" href="../estilo.css">
+</head>
+<body>
+    <div class="top-bar">
+        <h1>Sistema Hospitalario</h1>
+        <div class="user-info"><span>Bienvenida, <strong id="nutritionistName">Nutricionista</strong></span><button class="logout-btn" onclick="logout()">Cerrar Sesión</button></div>
+    </div>
+    <aside class="sidebar">
+        <div class="sidebar-logo">Nutrición</div>
+        <ul class="sidebar-menu">
+            <li><a href="#recetas">Recetas</a></li>
+            <li><a href="#menus">Menús</a></li>
+            <li><a href="#planificacion">Planificación por paciente</a></li>
+            <li><a href="#historia">Información clínica</a></li>
+        </ul>
+    </aside>
+    <main class="main-content">
+        <div class="page-header"><h1>Gestión nutricional</h1><p>Recetas, menús y planes personalizados para la jornada de cocina.</p></div>
+
+        <section id="recetas" class="card">
+            <div class="card-header"><h2>Recetas culinarias</h2></div>
+            <div class="card-body">
+                <form id="formRecetaNutricion">
+                    <input id="recetaId" type="hidden">
+                    <div class="form-grid">
+                        <div class="form-group"><label for="recetaNombre">Nombre</label><input id="recetaNombre" required maxlength="120"></div>
+                        <div class="form-group"><label for="recetaPorciones">Porciones base</label><input id="recetaPorciones" type="number" min="1" step="1" value="1" required></div>
+                        <div class="form-group"><label for="recetaDescripcion">Descripción</label><input id="recetaDescripcion" maxlength="500"></div>
+                        <div class="form-group"><label for="recetaInstrucciones">Instrucciones</label><textarea id="recetaInstrucciones" rows="2"></textarea></div>
+                    </div>
+                    <button class="btn btn-success" type="submit" id="guardarReceta">Guardar receta</button>
+                    <button class="btn btn-secondary" type="button" id="cancelarEdicionReceta" hidden>Cancelar edición</button>
+                </form>
+                <h3>Ingredientes</h3>
+                <form id="formDetalleReceta">
+                    <div class="form-grid">
+                        <div class="form-group"><label for="detalleRecetaId">Receta</label><select id="detalleRecetaId" required></select></div>
+                        <div class="form-group"><label for="detalleProductoId">Producto</label><select id="detalleProductoId" required></select></div>
+                        <div class="form-group"><label for="detalleCantidad">Cantidad</label><input id="detalleCantidad" type="number" min="0.01" step="0.01" required></div>
+                        <div class="form-group"><label for="detalleUnidad">Unidad</label><input id="detalleUnidad" maxlength="30" required></div>
+                        <div class="form-group"><label for="detalleIndicaciones">Indicaciones</label><input id="detalleIndicaciones"></div>
+                    </div>
+                    <button class="btn btn-secondary" type="submit">Agregar ingrediente</button>
+                </form>
+                <table class="table"><thead><tr><th>Receta</th><th>Porciones</th><th>Ingredientes</th><th>Acciones</th></tr></thead><tbody id="tablaRecetasNutricion"></tbody></table>
+            </div>
+        </section>
+
+        <section id="menus" class="card">
+            <div class="card-header"><h2>Menús diarios y recetas</h2></div>
+            <div class="card-body">
+                <form id="formMenuNutricion">
+                    <input id="menuId" type="hidden">
+                    <div class="form-grid">
+                        <div class="form-group"><label for="menuFecha">Fecha</label><input id="menuFecha" type="date" required></div>
+                        <div class="form-group"><label for="menuTurno">Turno</label><select id="menuTurno"><option value="">Sin turno</option><option>desayuno</option><option>almuerzo</option><option>merienda</option><option>cena</option></select></div>
+                        <div class="form-group"><label for="menuPlato">Plato principal</label><input id="menuPlato" maxlength="100"></div>
+                        <div class="form-group"><label for="menuGuarnicion">Guarnición</label><input id="menuGuarnicion" maxlength="100"></div>
+                        <div class="form-group"><label for="menuPostre">Postre</label><input id="menuPostre" maxlength="100"></div>
+                        <div class="form-group"><label for="menuRaciones">Raciones previstas</label><input id="menuRaciones" type="number" min="0" step="1"></div>
+                    </div>
+                    <button class="btn btn-success" type="submit" id="guardarMenu">Guardar menú</button>
+                    <button class="btn btn-secondary" type="button" id="cancelarEdicionMenu" hidden>Cancelar edición</button>
+                </form>
+                <h3>Asignar receta a menú</h3>
+                <form id="formAsignarReceta">
+                    <div class="form-grid">
+                        <div class="form-group"><label for="asignarMenuId">Menú</label><select id="asignarMenuId" required></select></div>
+                        <div class="form-group"><label for="asignarRecetaId">Receta</label><select id="asignarRecetaId" required></select></div>
+                        <div class="form-group"><label for="asignarPorciones">Porciones</label><input id="asignarPorciones" type="number" min="1" step="1" value="1" required></div>
+                        <div class="form-group"><label for="asignarMomento">Momento</label><input id="asignarMomento" placeholder="Almuerzo, cena…"></div>
+                    </div>
+                    <button class="btn btn-secondary" type="submit">Agregar receta al menú</button>
+                </form>
+                <table class="table"><thead><tr><th>Fecha</th><th>Turno</th><th>Plato</th><th>Recetas</th><th>Acciones</th></tr></thead><tbody id="tablaMenusNutricion"></tbody></table>
+            </div>
+        </section>
+
+        <section id="planificacion" class="card">
+            <div class="card-header"><h2>Asignar menú a paciente</h2></div>
+            <div class="card-body">
+                <form id="formPlanDieta">
+                    <div class="form-grid">
+                        <div class="form-group"><label for="planPacienteId">Paciente</label><select id="planPacienteId" required></select></div>
+                        <div class="form-group"><label for="planMenuId">Menú</label><select id="planMenuId" required></select></div>
+                        <div class="form-group"><label for="planFecha">Fecha de entrega</label><input id="planFecha" type="date" required></div>
+                        <div class="form-group"><label for="planCondicion">Condición o adaptación clínica</label><input id="planCondicion"></div>
+                        <div class="form-group"><label for="planObservaciones">Observaciones para cocina</label><textarea id="planObservaciones" rows="2"></textarea></div>
+                    </div>
+                    <button class="btn btn-success" type="submit">Asignar planificación</button>
+                </form>
+                <table class="table"><thead><tr><th>Fecha</th><th>Paciente</th><th>Menú</th><th>Adaptación / observaciones</th></tr></thead><tbody id="tablaPlanesNutricion"></tbody></table>
+            </div>
+        </section>
+
+        <section id="historia" class="card">
+            <div class="card-header"><h2>Información clínica de pacientes</h2></div>
+            <div class="card-body">
+                <label for="historiaPacienteId">Paciente</label>
+                <select id="historiaPacienteId"></select>
+                <button class="btn btn-secondary" type="button" id="consultarHistoria">Consultar historia clínica</button>
+                <div id="historiaClinicaResultado" aria-live="polite"></div>
+            </div>
+        </section>
+    </main>
+    <script src="../api/config.js"></script>
+    <script src="../utils/utils.js"></script>
+    <script src="nutricionista.js"></script>
+</body>
+</html>

@@ -2,6 +2,68 @@
 
 const ALMACEN_MOVIMIENTOS_API_URL = window.buildApiUrl('/api/almacen/movimientos');
 const ALMACEN_REPORTES_API_URL = window.buildApiUrl('/api/reportes/almacen');
+const REQUISICIONES_API_URL = window.buildApiUrl('/api/requisiciones');
+
+function escaparHTMLAlmacen(value) {
+    return String(value ?? '').replace(/[&<>"']/g, (character) => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
+    })[character]);
+}
+
+async function cargarRequisiciones() {
+    try {
+        const response = await fetch(REQUISICIONES_API_URL);
+        const payload = await response.json();
+        if (!response.ok) throw new Error(payload.message || 'No se pudieron cargar las solicitudes de cocina');
+        const tbody = document.getElementById('tablaRequisicionesAlmacen');
+        if (!tbody) return;
+        if (!payload.length) {
+            tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">No hay solicitudes pendientes.</td></tr>';
+            return;
+        }
+        tbody.innerHTML = payload.map((item) => {
+            const cocinero = item.cocinero?.persona
+                ? `${item.cocinero.persona.nombre || ''} ${item.cocinero.persona.apellido || ''}`.trim()
+                : item.cocinero?.usuario || 'Cocinero';
+            const acciones = item.estado === 'PENDIENTE'
+                ? `<button class="btn btn-small" onclick="actualizarEstadoRequisicion(${item.id}, 'EN_PROCESO')">Procesar</button> <button class="btn btn-small btn-secondary" onclick="actualizarEstadoRequisicion(${item.id}, 'RECHAZADO')">Rechazar</button>`
+                : item.estado === 'EN_PROCESO'
+                    ? `<button class="btn btn-small btn-success" onclick="actualizarEstadoRequisicion(${item.id}, 'SURTIDO')">Confirmar surtido</button> <button class="btn btn-small btn-secondary" onclick="actualizarEstadoRequisicion(${item.id}, 'RECHAZADO')">Rechazar</button>`
+                    : '-';
+            return `<tr>
+                <td>${escaparHTMLAlmacen(formatearFecha(item.created_at))}</td>
+                <td>${escaparHTMLAlmacen(cocinero || 'Cocinero')}</td>
+                <td>${escaparHTMLAlmacen(item.producto?.nombre || '-')}</td>
+                <td>${escaparHTMLAlmacen(item.cantidad)} ${escaparHTMLAlmacen(item.producto?.unidad_medida || '')}</td>
+                <td>${escaparHTMLAlmacen(item.motivo || '-')}</td>
+                <td>${escaparHTMLAlmacen(item.estado)}</td>
+                <td>${acciones}</td>
+            </tr>`;
+        }).join('');
+    } catch (error) {
+        console.error(error);
+        if (typeof showAlert === 'function') showAlert('danger', error.message || 'Error cargando solicitudes');
+    }
+}
+
+async function actualizarEstadoRequisicion(id, estado) {
+    const confirmar = estado !== 'SURTIDO' || confirm('¿Confirmar el despacho? Esta acción descontará el inventario del almacén.');
+    if (!confirmar) return;
+    try {
+        const response = await fetch(`${REQUISICIONES_API_URL}/${id}/estado`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ estado }),
+        });
+        const payload = await response.json();
+        if (!response.ok) throw new Error(payload.message || 'No se pudo actualizar la solicitud');
+        if (typeof showAlert === 'function') showAlert('success', estado === 'SURTIDO' ? 'Reposición despachada y stock de cocina actualizado' : `Solicitud ${estado.toLowerCase()}`);
+        await Promise.all([cargarRequisiciones(), cargarMovimientosYSalidas(), cargarReportesAlmacen()]);
+    } catch (error) {
+        console.error(error);
+        if (typeof showAlert === 'function') showAlert('danger', error.message || 'Error actualizando la solicitud');
+    }
+}
 
 async function cargarCatalogosMovimiento() {
     const [personalResponse, proveedoresResponse] = await Promise.all([
@@ -246,8 +308,10 @@ async function inicializarVistaAlmacenero() {
     await Promise.all([
         cargarCatalogosMovimiento(),
         cargarMovimientosYSalidas(),
-        cargarReportesAlmacen()
+        cargarReportesAlmacen(),
+        cargarRequisiciones()
     ]);
+    window.setInterval(() => cargarRequisiciones(), 15000);
 }
 
 document.addEventListener('DOMContentLoaded', inicializarVistaAlmacenero);

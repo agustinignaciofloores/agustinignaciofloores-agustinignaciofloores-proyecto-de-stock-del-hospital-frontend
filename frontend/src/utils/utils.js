@@ -292,6 +292,8 @@ document.addEventListener("DOMContentLoaded", () => {
                             destino = "almacenero.html"; 
                         } else if (rol === "cocinero") {
                             destino = "cocinero.html"; 
+                        } else if (rol === "nutricionista") {
+                            destino = "nutricionista.html";
                         } else if (rol === "donaciones" || rol === "donacion") {
                             destino = "donaciones.html"; 
                         } else if (rol === "visitas" || rol === "visita") {

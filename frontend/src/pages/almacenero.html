@@ -21,6 +21,7 @@
         <ul class="sidebar-menu">
             <li><a href="#" onclick="showSection('dashboard-section', this)" class="active"> Mi Dashboard</a></li>
             <li><a href="#" onclick="showSection('inventario', this)"> Inventario</a></li>
+            <li><a href="#" onclick="showSection('requisiciones', this)"> Solicitudes de cocina</a></li>
             <li><a href="#" onclick="showSection('movimientos', this)"> Movimientos</a></li>
             <li><a href="#" onclick="showSection('ingresos', this)"> Ingresos</a></li>
             <li><a href="#" onclick="showSection('salidas', this)"> Salidas</a></li>
@@ -42,6 +43,7 @@
         </div>
 
         <div id="inventario" class="section-content" style="display: none;"><div class="card"><div class="card-header"><h2>Inventario</h2><button class="btn btn-success" onclick="agregarProducto()">+ Producto</button><button class="btn btn-secondary" style="margin-left:8px;" onclick="openModal('modalInventario')">+ Movimiento</button></div><div class="card-body"><div id="contenedorAlertas" style="margin-bottom:12px;"></div><table class="table"><thead><tr><th>ID</th><th>Producto</th><th>Categoría</th><th>Unidad</th><th>Lote</th><th>Stock</th><th>Costo U.</th><th>Gasto total</th><th>Proveedor</th><th>Vencimiento</th><th>Personal</th><th>Acciones</th></tr></thead><tbody id="tablaInventario"></tbody></table></div></div></div>
+        <div id="requisiciones" class="section-content" style="display: none;"><div class="card"><div class="card-header"><h2>Solicitudes de reposición de cocina</h2><button class="btn btn-secondary" onclick="cargarRequisiciones()">Actualizar</button></div><div class="card-body"><table class="table"><thead><tr><th>Fecha</th><th>Cocinero</th><th>Producto</th><th>Cantidad</th><th>Motivo</th><th>Estado</th><th>Acciones</th></tr></thead><tbody id="tablaRequisicionesAlmacen"></tbody></table></div></div></div>
         <div id="movimientos" class="section-content" style="display: none;"><div class="card"><div class="card-header"><h2>Movimientos</h2></div><div class="card-body"><table class="table"><thead><tr><th>ID</th><th>Producto</th><th>Tipo</th><th>Cantidad</th><th>Proveedor</th><th>Precio U.</th><th>Gasto total</th><th>Vencimiento</th><th>Fecha</th><th>Personal</th><th>Motivo</th></tr></thead><tbody id="tablaMovimientos"></tbody></table></div></div></div>
         <div id="ingresos" class="section-content" style="display: none;"><div class="card"><div class="card-header"><h2>Ingresos</h2></div><div class="card-body"><table class="table"><thead><tr><th>ID</th><th>Producto</th><th>Proveedor</th><th>Cantidad</th><th>Precio Unitario</th><th>Total Gastado</th><th>Vencimiento</th><th>Acciones</th></tr></thead><tbody id="tablaIngresos"></tbody></table></div></div></div>
         <div id="salidas" class="section-content" style="display: none;"><div class="card"><div class="card-header"><h2>Salidas</h2></div><div class="card-body"><table class="table"><thead><tr><th>ID</th><th>Producto</th><th>Cantidad</th><th>Fecha</th><th>Usuario</th><th>Motivo</th></tr></thead><tbody id="tablaSalidas"></tbody></table></div></div></div>
@@ -132,6 +134,11 @@
             try {
                 if (sectionId === 'inventario' && typeof cargarInventario === 'function') {
                     await cargarInventario();
+                    return;
+                }
+
+                if (sectionId === 'requisiciones' && typeof cargarRequisiciones === 'function') {
+                    await cargarRequisiciones();
                     return;
                 }
 
