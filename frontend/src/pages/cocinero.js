@@ -9,11 +9,18 @@ let dietasData = [];
 let inventarioData = [];
 let requisicionesData = [];
 let planificacionesData = [];
+let apiWorkflowUnavailable = false;
+let inventarioLegacyMode = false;
 
 document.addEventListener('DOMContentLoaded', () => {
     inicializarCocina();
     window.setInterval(() => {
-        actualizarStockYRequisiciones().catch((error) => console.error(error));
+        if (!apiWorkflowUnavailable) {
+            actualizarStockYRequisiciones().catch((error) => {
+                console.error(error);
+                if (error.status === 404) apiWorkflowUnavailable = true;
+            });
+        }
     }, 15000);
 
     const inputBusqueda = document.getElementById('buscar-dieta');
@@ -68,9 +75,32 @@ async function parseApiError(response, fallback) {
 async function fetchJson(url, fallbackError) {
     const response = await fetch(url);
     if (!response.ok) {
-        throw new Error(await parseApiError(response, fallbackError));
+        const error = new Error(await parseApiError(response, fallbackError));
+        error.status = response.status;
+        throw error;
     }
     return response.json();
+}
+
+async function fetchStockCocina() {
+    try {
+        const stock = await fetchJson(STOCK_COCINA_API_URL, 'No se pudo cargar el inventario de cocina');
+        inventarioLegacyMode = false;
+        return stock;
+    } catch (error) {
+        if (error.status !== 404) throw error;
+        inventarioLegacyMode = true;
+        const legacyStock = await fetchJson(window.buildApiUrl('/api/inventario'), 'No se pudo cargar el inventario');
+        return legacyStock.map((item) => ({
+            id: item.id,
+            nombre: item.producto,
+            categoria: item.categoria,
+            unidad_medida: item.unidad,
+            stock_almacen: item.stock,
+            stock_cocina: 0,
+            actualizado_at: item.fecha || null,
+        }));
+    }
 }
 
 async function inicializarCocina() {
@@ -80,7 +110,7 @@ async function inicializarCocina() {
             fetchJson(`${API_URL}/menus`, 'No se pudieron cargar los menús'),
             fetchJson(`${API_URL}/dietas`, 'No se pudieron cargar las dietas especiales'),
             fetchJson(`${API_URL}/planificacion`, 'No se pudo cargar la planilla de cocina'),
-            fetchJson(STOCK_COCINA_API_URL, 'No se pudo cargar el inventario de cocina'),
+            fetchStockCocina(),
             fetchJson(REQUISICIONES_API_URL, 'No se pudieron cargar las solicitudes')
         ]);
         const errores = [];
@@ -136,6 +166,13 @@ async function inicializarCocina() {
             requisicionesData = [];
             renderEmptyRow('tablaRequisicionesCocina', 5, 'No se pudieron cargar las solicitudes');
             errores.push(requisiciones.status === 'rejected' ? requisiciones.reason : new Error('La respuesta de solicitudes no es válida'));
+        }
+        apiWorkflowUnavailable = [planificaciones, requisiciones].some((result) =>
+            result.status === 'rejected' && result.reason?.status === 404);
+        const aviso = document.getElementById('avisoInventarioCocina');
+        if (aviso) aviso.hidden = !inventarioLegacyMode;
+        if (apiWorkflowUnavailable) {
+            notify('danger', 'El backend desplegado aún no tiene las rutas de reposiciones y planificación. El administrador debe desplegar la última versión del repositorio backend.');
         }
 
         renderPreparacion();
@@ -255,14 +292,15 @@ function renderInventario() {
 }
 
 function renderProductosRequisicion() {
-    const select = document.getElementById('productoRequisicion');
-    if (!select) return;
-    select.replaceChildren(new Option('Seleccionar producto', ''));
+    const list = document.getElementById('productosRequisicion');
+    if (!list) return;
+    list.replaceChildren();
     inventarioData.forEach((item) => {
-        const nombre = `${item.nombre} (#${item.id}) — disponible en almacén: ${item.stock_almacen}`;
-        select.add(new Option(nombre, item.id));
+        const option = document.createElement('option');
+        option.value = `${item.nombre} (#${item.id})`;
+        option.label = `${item.stock_almacen} ${item.unidad_medida || ''} disponibles en almacén`;
+        list.append(option);
     });
-    if (!inventarioData.length) select.replaceChildren(new Option('No hay productos disponibles', ''));
 }
 
 function renderRequisicionesCocina() {
@@ -309,7 +347,7 @@ function renderPlanCocina() {
 
 async function actualizarStockYRequisiciones() {
     const [stock, requisiciones, planificaciones] = await Promise.all([
-        fetchJson(STOCK_COCINA_API_URL, 'No se pudo actualizar el inventario'),
+        fetchStockCocina(),
         fetchJson(REQUISICIONES_API_URL, 'No se pudieron actualizar las solicitudes'),
         fetchJson(`${API_URL}/planificacion`, 'No se pudo actualizar la planilla de cocina'),
     ]);
@@ -324,16 +362,36 @@ async function actualizarStockYRequisiciones() {
 
 async function crearRequisicionCocina(event) {
     event.preventDefault();
-    const productoId = Number(document.getElementById('productoRequisicion').value);
+    const productoIngresado = document.getElementById('productoRequisicion').value.trim();
+    const productoSeleccionado = inventarioData.find((item) =>
+        productoIngresado === `${item.nombre} (#${item.id})`
+        || (productoIngresado.toLowerCase() === String(item.nombre).toLowerCase()
+            && inventarioData.filter((candidate) => String(candidate.nombre).toLowerCase() === productoIngresado.toLowerCase()).length === 1));
+    const productoId = Number(productoSeleccionado?.id);
     const cantidad = Number(document.getElementById('cantidadRequisicion').value);
     const motivo = document.getElementById('motivoRequisicion').value.trim();
+    if (!productoSeleccionado) {
+        notify('danger', 'Escribe el nombre exacto de un producto registrado o selecciónalo de la lista.');
+        return;
+    }
+    if (!Number.isInteger(cantidad) || cantidad < 1) {
+        notify('danger', 'La cantidad solicitada debe ser un entero mayor a cero.');
+        return;
+    }
     try {
         const response = await fetch(REQUISICIONES_API_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ producto_id: productoId, cantidad, motivo }),
         });
-        if (!response.ok) throw new Error(await parseApiError(response, 'No se pudo enviar la solicitud'));
+        if (!response.ok) {
+            if (response.status === 404) {
+                apiWorkflowUnavailable = true;
+                throw new Error('El backend desplegado todavía no tiene activa la función de reposiciones. Debe desplegarse la última versión del repositorio backend.');
+            }
+            throw new Error(await parseApiError(response, 'No se pudo enviar la solicitud'));
+        }
+        apiWorkflowUnavailable = false;
         document.getElementById('formRequisicionCocina').reset();
         notify('success', 'Solicitud enviada al almacén');
         await actualizarStockYRequisiciones();

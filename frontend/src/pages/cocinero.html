@@ -57,6 +57,7 @@
                 <div class="card-header"><h2>Inventario de Cocina</h2></div>
                 <div class="card-body">
                     <p>Existencias propias de cocina. El stock se actualiza al confirmar un surtido.</p>
+                    <p id="avisoInventarioCocina" class="alert alert-warning" hidden>El backend desplegado todavía no ofrece el inventario de cocina. Se muestra el stock del almacén hasta actualizar el servicio.</p>
                     <table class="table"><thead><tr><th>Producto</th><th>Stock cocina</th><th>Stock almacén</th></tr></thead><tbody id="tablaInventario"></tbody></table>
                 </div>
             </div>
@@ -65,7 +66,7 @@
                 <div class="card-body">
                     <form id="formRequisicionCocina" onsubmit="crearRequisicionCocina(event)">
                         <div class="form-grid">
-                            <div class="form-group"><label for="productoRequisicion">Producto</label><select id="productoRequisicion" required><option value="">Cargando productos…</option></select></div>
+                            <div class="form-group"><label for="productoRequisicion">Producto</label><input id="productoRequisicion" type="text" list="productosRequisicion" placeholder="Escribe el nombre o selecciona un producto" autocomplete="off" required><datalist id="productosRequisicion"></datalist></div>
                             <div class="form-group"><label for="cantidadRequisicion">Cantidad requerida</label><input id="cantidadRequisicion" type="number" min="1" step="1" required></div>
                             <div class="form-group"><label for="motivoRequisicion">Motivo (opcional)</label><input id="motivoRequisicion" type="text" maxlength="500"></div>
                         </div>
